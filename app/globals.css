@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f7f5;
+  --foreground: #1b1b19;
+  --muted: #666660;
+  --card: #ffffff;
+  --line: #e2e1dc;
+  --accent: #185fa5;
+  --accent-soft: #e6f1fb;
+  --ok: #3b6d11;
+  --ok-soft: #eaf3de;
+  --info: #854f0b;
+  --info-soft: #faeeda;
+  --idle: #5f5e5a;
+  --idle-soft: #eceae3;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #12120f;
+    --foreground: #ecebe6;
+    --muted: #a3a29b;
+    --card: #1b1b17;
+    --line: #34332e;
+    --accent: #85b7eb;
+    --accent-soft: #0c447c;
+    --ok: #c0dd97;
+    --ok-soft: #27500a;
+    --info: #fac775;
+    --info-soft: #633806;
+    --idle: #d3d1c7;
+    --idle-soft: #444441;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-idle: var(--idle);
+  --color-idle-soft: var(--idle-soft);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family:
+    "Noto Kufi Arabic", "Noto Sans Arabic", system-ui, -apple-system, "Segoe UI",
+    Tahoma, sans-serif;
+  line-height: 1.6;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
