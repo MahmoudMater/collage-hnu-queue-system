@@ -14,6 +14,8 @@
   --info-soft: #faeeda;
   --idle: #5f5e5a;
   --idle-soft: #eceae3;
+  --danger: #a32d2d;
+  --danger-soft: #fcebeb;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -31,6 +33,8 @@
     --info-soft: #633806;
     --idle: #d3d1c7;
     --idle-soft: #444441;
+    --danger: #f7c1c1;
+    --danger-soft: #791f1f;
   }
 }
 
@@ -48,6 +52,8 @@
   --color-info-soft: var(--info-soft);
   --color-idle: var(--idle);
   --color-idle-soft: var(--idle-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
 }
 
 body {

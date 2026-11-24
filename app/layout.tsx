@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { t } from "@/lib/strings";
+import { ta, t } from "@/lib/strings";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,6 +16,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <div className="mx-auto flex max-w-xl items-center px-4 py-3">
             <Link href="/" className="text-base font-medium">
               {t.appName}
+            </Link>
+            <Link href="/ta" className="ms-auto text-sm text-muted">
+              {ta.nav.link}
             </Link>
           </div>
         </header>
