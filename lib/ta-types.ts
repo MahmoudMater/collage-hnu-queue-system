@@ -84,3 +84,38 @@ export interface RowInput {
   day?: string;
   time?: string;
 }
+
+export type EntryStatus =
+  | "QUEUED"
+  | "ASKING"
+  | "COMING"
+  | "INSIDE"
+  | "DONE"
+  | "MISSED"
+  | "MOVED"
+  | "NOT_DISCUSSED"
+  | "CANCELLED";
+
+export interface QueueEntry {
+  id: string;
+  number: number;
+  leaderName: string;
+  time: string | null;
+  lane: "MAIN" | "LATE";
+  status: EntryStatus;
+  mainSeq: number | null;
+  lateSeq: number | null;
+  comingDeadlineAt: string | null;
+  arriveDeadlineAt: string | null;
+  /** Decided by the server: whether Remove is allowed for this team now. */
+  canRemove: boolean;
+}
+
+/** The TA's view of a started session. `allowed` is decided by the server; the panel only reads it. */
+export interface QueueView {
+  session: { id: string; status: TaSessionSummary["status"]; version: number };
+  serverNow: string;
+  activeEntryId: string | null;
+  allowed: { next: boolean; arrived: boolean; absent: boolean; finish: boolean; undo: boolean };
+  entries: QueueEntry[];
+}

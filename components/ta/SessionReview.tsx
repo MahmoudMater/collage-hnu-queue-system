@@ -4,6 +4,7 @@ import Link from "next/link";
 import { use, useCallback, useState } from "react";
 import { StateMessage } from "@/components/StateMessage";
 import { StatusBadge } from "@/components/StatusBadge";
+import { ControlPanel } from "@/components/ta/ControlPanel";
 import { ErrorNote } from "@/components/ta/ErrorNote";
 import { IssueList } from "@/components/ta/IssueList";
 import { RowForm } from "@/components/ta/RowForm";
@@ -95,7 +96,16 @@ export function SessionReview({ params }: { params: Promise<{ sessionId: string 
         <p className="mt-1 text-sm text-muted">{formatDate(s.sessionDate)}</p>
       </div>
 
-      {!s.claimed ? (
+      {s.status === "STARTED" ? (
+        <>
+          <ControlPanel sessionId={s.id} />
+          <Link href={`/sessions/${s.id}`} className="block text-sm text-accent">
+            {ta.session.openPublic}
+          </Link>
+        </>
+      ) : null}
+
+      {s.status === "STARTED" ? null : !s.claimed ? (
         <section className="rounded-xl border border-line bg-card p-4">
           <h2 className="text-base font-medium">{ta.session.claimTitle}</h2>
           <p className="mt-1 text-sm text-muted">{ta.session.claimBody}</p>
@@ -118,7 +128,7 @@ export function SessionReview({ params }: { params: Promise<{ sessionId: string 
             {ta.session.openPublic}
           </Link>
         </p>
-      ) : s.status === "DRAFT" ? (
+      ) : s.status === "STARTED" ? null : s.status === "DRAFT" ? (
         <p className="rounded-lg bg-idle-soft px-3 py-2 text-sm text-idle">{ta.session.draftNote}</p>
       ) : null}
       {s.unpublishedChanges ? (
@@ -126,6 +136,20 @@ export function SessionReview({ params }: { params: Promise<{ sessionId: string 
       ) : null}
 
       <ErrorNote error={error} />
+
+      {s.status === "CONFIRMED" && s.mine ? (
+        <section className="rounded-xl border border-line bg-card p-4">
+          <p className="text-sm text-muted">{ta.panel.startHelp}</p>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => act(async () => (await taSend("POST", `${base}/start`), taGet<TaSession>(base)))}
+            className="mt-3 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-background disabled:opacity-40"
+          >
+            {busy ? ta.panel.starting : ta.panel.start}
+          </button>
+        </section>
+      ) : null}
 
       <section>
         <h2 className="mb-2 text-sm font-medium text-muted">{ta.session.issues}</h2>
