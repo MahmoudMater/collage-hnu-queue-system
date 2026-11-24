@@ -20,7 +20,14 @@ const nextConfig: NextConfig = {
     },
   },
   async rewrites() {
-    return [{ source: "/api/:path*", destination: `${apiUrl}/api/:path*` }];
+    return [
+      { source: "/api/:path*", destination: `${apiUrl}/api/:path*` },
+      // The live board's Socket.IO endpoint. Polling works through this
+      // proxy; the WebSocket upgrade needs the reverse proxy in production.
+      // The client's request has no trailing slash once Next normalises it.
+      { source: "/socket.io", destination: `${apiUrl}/socket.io/` },
+      { source: "/socket.io/:path*", destination: `${apiUrl}/socket.io/:path*` },
+    ];
   },
 };
 

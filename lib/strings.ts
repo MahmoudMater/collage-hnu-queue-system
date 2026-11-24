@@ -30,6 +30,33 @@ export const t = {
     time: "الميعاد",
     noTeams: "مفيش تيمات في الجدول.",
   },
+  live: {
+    insideTitle: "جوه دلوقتي",
+    nobodyInside: "مفيش حد جوه دلوقتي",
+    asking: "بنسأل تيم",
+    askingHint: "عنده وقت يرد قبل ما الدور يعدّي",
+    coming: "جاي دلوقتي",
+    comingHint: "المفروض يوصل قبل ما الوقت يخلص",
+    inside: "بيناقش دلوقتي",
+    secondsLeft: "ثانية",
+    mainTitle: "الطابور",
+    lateTitle: "المتأخرين",
+    emptyMain: "مفيش حد مستني",
+    emptyLate: "مفيش متأخرين",
+    position: "الدور",
+    scheduledAt: "ميعاده",
+    expectedIn: "متوقع بعد حوالي",
+    expectedBetween: "متوقع بعد",
+    minutes: "دقيقة",
+    now: "دوره دلوقتي",
+    movedIn: "اتنقل من مناقشة تانية",
+    late: "متأخر",
+    ended: "المناقشة خلصت.",
+    mine: "تيمك",
+    connectionLost: "الاتصال اتقطع. بنحاول نرجع وبنحدّث الصفحة كل شوية.",
+    connecting: "بنوصّل…",
+    live: "مباشر",
+  },
   search: {
     label: "دوّر على رقم تيمك",
     placeholder: "مثلاً 21",
@@ -70,6 +97,16 @@ export function sessionsCount(n: number): string {
   if (n === 1) return "مناقشة واحدة";
   if (n === 2) return "مناقشتين";
   return `${n} ${n <= 10 ? "مناقشات" : "مناقشة"}`;
+}
+
+/** The first two words of a name, for a one-line cell. */
+export function shortName(name: string): string {
+  return name.trim().split(/\s+/).slice(0, 2).join(" ");
+}
+
+/** Whole minutes, at least 1, for an estimate in seconds. */
+export function minutesOf(seconds: number): number {
+  return Math.max(1, Math.round(seconds / 60));
 }
 
 /** Presentation only: show the schedule time with Arabic AM and PM markers. */

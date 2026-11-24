@@ -3,9 +3,10 @@ import { Suspense } from "react";
 import { ListSkeleton } from "@/components/ListSkeleton";
 import { StateMessage } from "@/components/StateMessage";
 import { StatusBadge } from "@/components/StatusBadge";
+import { LiveBoard } from "@/components/live/LiveBoard";
 import { apiGet } from "@/lib/api";
 import { formatDate, formatTime, t } from "@/lib/strings";
-import type { SessionSnapshot } from "@/lib/types";
+import type { LiveSnapshot } from "@/lib/types";
 
 export default function SessionPage({ params }: { params: Promise<{ sessionId: string }> }) {
   return (
@@ -19,9 +20,10 @@ export default function SessionPage({ params }: { params: Promise<{ sessionId: s
 
 async function SessionContent({ params }: { params: Promise<{ sessionId: string }> }) {
   const { sessionId } = await params;
-  const { session, teams } = await apiGet<SessionSnapshot>(
+  const snapshot = await apiGet<LiveSnapshot>(
     `/api/v1/discussions/sessions/${encodeURIComponent(sessionId)}`,
   );
+  const { session, teams } = snapshot;
   return (
     <>
       <Link href={`/subjects/${session.subject.id}`} className="text-sm text-accent">
@@ -38,8 +40,16 @@ async function SessionContent({ params }: { params: Promise<{ sessionId: string 
         <p className="mt-4 rounded-lg bg-idle-soft px-3 py-2 text-sm text-idle">{t.session.readOnly}</p>
       ) : null}
 
-      <h2 className="mt-6 mb-3 text-sm font-medium text-muted">{t.session.scheduleTitle}</h2>
-      {teams.length === 0 ? (
+      {session.status !== "NOT_STARTED" ? (
+        <div className="mt-5">
+          <LiveBoard sessionId={session.id} initial={snapshot} />
+        </div>
+      ) : null}
+
+      {session.status === "NOT_STARTED" ? (
+        <h2 className="mt-6 mb-3 text-sm font-medium text-muted">{t.session.scheduleTitle}</h2>
+      ) : null}
+      {session.status !== "NOT_STARTED" ? null : teams.length === 0 ? (
         <StateMessage title={t.session.noTeams} body="" />
       ) : (
         <ol className="overflow-hidden rounded-xl border border-line bg-card">
