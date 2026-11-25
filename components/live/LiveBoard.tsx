@@ -54,6 +54,30 @@ export function LiveBoard({
           mine={myTeam}
         />
       </div>
+      {board.movedOut.length > 0 ? (
+        <section>
+          <h2 className="mb-2 text-sm font-medium text-muted">{t.live.movedTitle}</h2>
+          <ul className="space-y-1 text-sm text-muted">
+            {board.movedOut.map((m) => (
+              <li key={m.number}>
+                {t.session.team} {m.number} {t.live.movedTo} <span dir="ltr">{m.toTa}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+      {board.session.status === "ENDED" && board.teams.some((x) => x.status === "NOT_DISCUSSED") ? (
+        <section>
+          <h2 className="mb-1 text-sm font-medium text-muted">{t.live.notDiscussedTitle}</h2>
+          <p className="mb-2 text-xs text-muted">{t.live.notDiscussedHint}</p>
+          <p className="text-sm">
+            {board.teams
+              .filter((x) => x.status === "NOT_DISCUSSED")
+              .map((x) => x.number)
+              .join("، ")}
+          </p>
+        </section>
+      ) : null}
     </div>
   );
 }

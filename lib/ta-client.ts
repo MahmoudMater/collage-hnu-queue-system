@@ -15,6 +15,7 @@ export class TaError extends Error {
     readonly code: string,
     message: string,
     readonly fieldErrors: Record<string, string[]> = {},
+    readonly details: Record<string, unknown> = {},
   ) {
     super(message);
   }
@@ -29,7 +30,7 @@ async function refresh(): Promise<boolean> {
 }
 
 async function parseError(res: Response): Promise<TaError> {
-  let body: { error?: { code?: string; message?: string; field_errors?: Record<string, string[]> } } = {};
+  let body: { error?: { code?: string; message?: string; field_errors?: Record<string, string[]>; details?: Record<string, unknown> } } = {};
   try {
     body = await res.json();
   } catch {
@@ -40,6 +41,7 @@ async function parseError(res: Response): Promise<TaError> {
     body.error?.code ?? "REQUEST_FAILED",
     body.error?.message ?? `The server answered ${res.status}.`,
     body.error?.field_errors,
+    body.error?.details,
   );
 }
 

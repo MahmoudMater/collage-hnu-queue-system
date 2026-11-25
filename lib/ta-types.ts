@@ -109,6 +109,8 @@ export interface QueueEntry {
   arriveDeadlineAt: string | null;
   /** Decided by the server: whether Remove is allowed for this team now. */
   canRemove: boolean;
+  canSendLate: boolean;
+  canMove: boolean;
 }
 
 /** The TA's view of a started session. `allowed` is decided by the server; the panel only reads it. */

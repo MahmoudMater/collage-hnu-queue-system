@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { StateMessage } from "@/components/StateMessage";
 import { ErrorNote } from "@/components/ta/ErrorNote";
+import { MoveDialog } from "@/components/ta/MoveDialog";
 import { formatTime, ta, t } from "@/lib/strings";
 import { TaError, taGet, taSend } from "@/lib/ta-client";
 import type { QueueEntry, QueueView } from "@/lib/ta-types";
@@ -22,6 +23,8 @@ export function ControlPanel({ sessionId }: { sessionId: string }) {
   const [error, setError] = useState<unknown>(null);
   const [busy, setBusy] = useState(false);
   const [forbidden, setForbidden] = useState(false);
+  const [moving, setMoving] = useState<QueueEntry | null>(null);
+  const [blocked, setBlocked] = useState<number[] | null>(null);
   const latest = useRef(0);
 
   const show = useCallback((next: QueueView) => {
@@ -51,11 +54,15 @@ export function ControlPanel({ sessionId }: { sessionId: string }) {
   async function act(path: string) {
     setBusy(true);
     setError(null);
+    setBlocked(null);
     try {
       latest.current++; // an older refresh must not overwrite this answer
       show(await taSend<QueueView>("POST", `${base}/${path}`, path === "undo" ? {} : undefined));
     } catch (e) {
-      setError(e);
+      if (e instanceof TaError && e.code === "QUEUE_NOT_EMPTY") {
+        setBlocked(((e.details.numbers as number[] | undefined) ?? []).slice(0, 30));
+        setError(null);
+      } else setError(e);
       await refresh(); // show the state the server has now
     } finally {
       setBusy(false);
@@ -75,7 +82,8 @@ export function ControlPanel({ sessionId }: { sessionId: string }) {
   const main = waiting.filter((e) => e.lane === "MAIN");
   const late = waiting.filter((e) => e.lane === "LATE");
   const done = view.entries.filter((e) => e.status === "DONE").length;
-  const missed = view.entries.filter((e) => e.status === "MISSED").length;
+  const missedEntries = view.entries.filter((e) => e.status === "MISSED");
+  const missed = missedEntries.length;
   const allowed = view.allowed;
   const button = "rounded-lg px-4 py-3 text-base font-medium disabled:opacity-40";
 
@@ -141,9 +149,70 @@ export function ControlPanel({ sessionId }: { sessionId: string }) {
       </p>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Waiting title={`${ta.panel.main} (${main.length})`} entries={main} busy={busy} onRemove={(id) => act(`entries/${id}/remove`)} />
-        <Waiting title={`${ta.panel.late} (${late.length})`} entries={late} busy={busy} onRemove={(id) => act(`entries/${id}/remove`)} />
+        <Waiting title={`${ta.panel.main} (${main.length})`} entries={main} busy={busy} onRemove={(id) => act(`entries/${id}/remove`)} onMove={setMoving} />
+        <Waiting title={`${ta.panel.late} (${late.length})`} entries={late} busy={busy} onRemove={(id) => act(`entries/${id}/remove`)} onMove={setMoving} />
       </div>
+
+      {missedEntries.length > 0 ? (
+        <div>
+          <h3 className="mb-2 text-sm font-medium text-muted">
+            {ta.panel.missedTitle} ({missed})
+          </h3>
+          <ul className="space-y-1.5">
+            {missedEntries.map((e) => (
+              <li key={e.id} className="flex items-center justify-between gap-2 rounded-lg border border-line bg-card px-3 py-2">
+                <span className="min-w-0">
+                  <span className="font-medium">
+                    {t.session.team} {e.number}
+                  </span>
+                  <span className="block truncate text-xs text-muted">{e.leaderName}</span>
+                </span>
+                <span className="flex shrink-0 gap-3 text-sm">
+                  {e.canSendLate ? (
+                    <button type="button" disabled={busy} onClick={() => act(`entries/${e.id}/late`)} className="text-accent disabled:opacity-40">
+                      {ta.panel.sendLate}
+                    </button>
+                  ) : null}
+                  {e.canMove ? (
+                    <button type="button" disabled={busy} onClick={() => setMoving(e)} className="text-accent disabled:opacity-40">
+                      {ta.panel.move}
+                    </button>
+                  ) : null}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {moving ? (
+        <MoveDialog
+          sessionId={sessionId}
+          entryId={moving.id}
+          teamNumber={moving.number}
+          onCancel={() => setMoving(null)}
+          onDone={() => {
+            setMoving(null);
+            void refresh();
+          }}
+        />
+      ) : null}
+
+      {blocked ? (
+        <p role="alert" className="rounded-lg bg-info-soft px-3 py-2 text-sm text-info">
+          {ta.panel.endBlocked} {blocked.join("، ")}
+        </p>
+      ) : null}
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => {
+          if (window.confirm(ta.panel.endConfirm)) void act("end");
+        }}
+        className="rounded-lg border border-line px-4 py-3 text-base disabled:opacity-40"
+      >
+        {ta.panel.end}
+      </button>
     </section>
   );
 }
@@ -153,11 +222,13 @@ function Waiting({
   entries,
   busy,
   onRemove,
+  onMove,
 }: {
   title: string;
   entries: QueueEntry[];
   busy: boolean;
   onRemove: (entryId: string) => void;
+  onMove: (entry: QueueEntry) => void;
 }) {
   return (
     <div>
@@ -177,11 +248,18 @@ function Waiting({
                   {e.time && e.lane === "MAIN" ? ` · ${formatTime(e.time)}` : ""}
                 </span>
               </span>
-              {e.canRemove ? (
-                <button type="button" disabled={busy} onClick={() => onRemove(e.id)} className="shrink-0 text-sm text-danger disabled:opacity-40">
-                  {ta.panel.remove}
-                </button>
-              ) : null}
+              <span className="flex shrink-0 gap-3 text-sm">
+                {e.canMove ? (
+                  <button type="button" disabled={busy} onClick={() => onMove(e)} className="text-accent disabled:opacity-40">
+                    {ta.panel.move}
+                  </button>
+                ) : null}
+                {e.canRemove ? (
+                  <button type="button" disabled={busy} onClick={() => onRemove(e.id)} className="text-danger disabled:opacity-40">
+                    {ta.panel.remove}
+                  </button>
+                ) : null}
+              </span>
             </li>
           ))}
         </ol>

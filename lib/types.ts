@@ -77,6 +77,8 @@ export interface LiveSnapshot extends SessionSnapshot {
   inside: InsideEntry | null;
   queues: { main: QueueItem[]; late: QueueItem[] };
   eta: { samples: number; medianSeconds: number | null };
+  /** Teams sent to another TA; no leader name. */
+  movedOut: { number: number; toTa: string | null }[];
 }
 
 /** What a broadcast carries: the full board and the sequence of the previous broadcast. */
