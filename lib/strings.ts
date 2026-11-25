@@ -57,6 +57,29 @@ export const t = {
     connecting: "بنوصّل…",
     live: "مباشر",
   },
+  leader: {
+    signInPrompt: "إنت leader تيم؟ ادخل بحساب Google عشان تتابع دورك.",
+    signIn: "ادخل بحساب Google",
+    working: "…",
+    codeTitle: "اربط تيمك",
+    codeHelp: "اكتب كود تيمك (موجود في شيت المناقشة).",
+    codePlaceholder: "مثلاً K7M2QX",
+    bind: "اربط",
+    bound: "تيمك مربوط:",
+    signOut: "خروج",
+    yourTurn: "دورك! لو إنت قدام الباب اضغط جاي.",
+    coming: "أنا جاي",
+    comingDone: "تمام، المعيد مستنيك. ادخل بسرعة.",
+    missed: "فاتك دورك. لو لسه عايز تناقش اطلب دور جديد.",
+    askAgain: "اطلب دور جديد",
+    queued: "إنت دلوقتي في طابور المتأخرين. هنندهلك لما فيه مكان فاضي.",
+    notInSession: "تيمك مش في المناقشة دي.",
+    notEligible: "الحساب ده مش مسجّل كطالب معتمد. كمّل تسجيلك في الموقع الرئيسي الأول.",
+    signInFailed: "الدخول ماتمش. جرّب تاني.",
+    callbackWorking: "بنكمّل الدخول…",
+    tryLater: "جرّب بعد",
+    seconds: "ثانية",
+  },
   search: {
     label: "دوّر على رقم تيمك",
     placeholder: "مثلاً 21",
@@ -77,6 +100,8 @@ export const t = {
     loading: "بحمّل…",
   },
 } as const;
+
+export const leaderText = t.leader;
 
 export const statusLabel: Record<StatusWord, string> = {
   NOT_STARTED: "لسه ماابتدتش",
@@ -280,6 +305,14 @@ export const errorText: Record<string, string> = {
   VALIDATION_FAILED: "راجع الخانات.",
   TA_NAME_NOT_IN_FILE: "الملف الجديد مفيهوش جدول للاسم ده.",
   FORBIDDEN: "مش مسموح لك بالحاجة دي.",
+  CLAIM_CODE_INVALID: "الكود ده مش مطابق لأي تيم.",
+  TEAM_ALREADY_BOUND: "التيم ده مربوط بحساب تاني. لو ده غلط اطلب من المعيد يفك الربط.",
+  ALREADY_LEADING: "حسابك مربوط بتيم تاني في المادة دي.",
+  TOO_MANY_ATTEMPTS: "جرّبت أكواد غلط كتير. استنى شوية وحاول تاني.",
+  CLAIM_UNAVAILABLE: "الربط مش متاح دلوقتي. جرّب بعد شوية.",
+  NOT_A_LEADER: "حسابك مش مربوط بتيم في المادة دي.",
+  TEAM_NOT_IN_SESSION: "تيمك مش في المناقشة دي.",
+  SESSION_NOT_STARTED: "المناقشة مش شغالة دلوقتي.",
   ACTIVE_ENTRY_EXISTS: "فيه تيم لسه جوه أو بنسأل عليه. خلّصه أو علّمه الأول.",
   QUEUE_EMPTY: "مفيش حد مستني في الطابور.",
   ILLEGAL_TRANSITION: "الحالة اتغيّرت، مش هينفع الإجراء ده دلوقتي.",
