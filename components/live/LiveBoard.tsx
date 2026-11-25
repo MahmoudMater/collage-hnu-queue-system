@@ -6,6 +6,8 @@ import { useMyTeam } from "@/lib/use-my-team";
 import type { LiveSnapshot } from "@/lib/types";
 import { InsideCard } from "./InsideCard";
 import { LeaderBox } from "./LeaderBox";
+import { PaceNote } from "./PaceNote";
+import { TurnAlert, useFollowedTeam } from "./TurnAlert";
 import { QueueColumn } from "./QueueColumn";
 
 /**
@@ -22,13 +24,22 @@ export function LiveBoard({
 }) {
   const { board, offsetMs, connection } = useLiveBoard(sessionId, initial);
   const me = useMyTeam(board.session.subject.id);
-  const myTeam = me.state.status === "signed-in" ? me.state.number : null;
+  const leaderTeam = me.state.status === "signed-in" ? me.state.number : null;
+  const follow = useFollowedTeam(sessionId);
+  // A signed-in leader watches his own team; anyone else may follow one by number.
+  const myTeam = leaderTeam ?? follow.team;
   return (
     <div className="space-y-4">
       {connection === "lost" ? (
         <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">
           {t.live.connectionLost}
         </p>
+      ) : null}
+      {board.session.status === "RUNNING" ? (
+        <PaceNote pause={board.session.break} delayMinutes={board.delayMinutes} offsetMs={offsetMs} />
+      ) : null}
+      {board.session.status === "RUNNING" ? (
+        <TurnAlert board={board} team={myTeam} fixed={leaderTeam !== null} onFollow={follow.set} />
       ) : null}
       {board.session.status === "RUNNING" ? (
         <LeaderBox sessionId={sessionId} subjectId={board.session.subject.id} board={board} offsetMs={offsetMs} me={me} />
@@ -74,7 +85,7 @@ export function LiveBoard({
             {board.teams
               .filter((x) => x.status === "NOT_DISCUSSED")
               .map((x) => x.number)
-              .join("، ")}
+              .join(", ")}
           </p>
         </section>
       ) : null}
