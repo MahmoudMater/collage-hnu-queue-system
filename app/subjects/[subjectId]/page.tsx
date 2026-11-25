@@ -36,10 +36,10 @@ async function SubjectContent({ params }: { params: Promise<{ subjectId: string 
         <div className="space-y-5">
           <ul className="space-y-3">
             {sessions.map((s) => (
-              <li key={s.id}>
+              <li key={s.id} className="rounded-xl border border-line bg-card">
                 <Link
                   href={`/sessions/${s.id}`}
-                  className="block rounded-xl border border-line bg-card px-4 py-4"
+                  className="block px-4 py-4"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <span className="text-base font-medium">{s.taName}</span>
@@ -50,6 +50,16 @@ async function SubjectContent({ params }: { params: Promise<{ subjectId: string 
                     {formatDate(s.date)} · {teamsCount(s.teamCount)}
                   </p>
                 </Link>
+                {s.status !== "ENDED" ? (
+                  <a
+                    href={`/api/v1/discussions/sessions/${encodeURIComponent(s.id)}/sheet`}
+                    target="_blank"
+                    rel="noopener"
+                    className="block border-t border-line px-4 py-2 text-sm text-accent"
+                  >
+                    {t.session.downloadSheet}
+                  </a>
+                ) : null}
               </li>
             ))}
           </ul>

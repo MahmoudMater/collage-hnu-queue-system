@@ -8,6 +8,7 @@ import { ControlPanel } from "@/components/ta/ControlPanel";
 import { ErrorNote } from "@/components/ta/ErrorNote";
 import { IssueList } from "@/components/ta/IssueList";
 import { RowForm } from "@/components/ta/RowForm";
+import { TeamsTable } from "@/components/ta/TeamsTable";
 import { dayLabel, formatDate, formatTime, ta, t } from "@/lib/strings";
 import { TaError, taGet, taSend, taUpload } from "@/lib/ta-client";
 import type { ParseIssue, RowInput, TaSession, UploadResult } from "@/lib/ta-types";
@@ -104,6 +105,8 @@ export function SessionReview({ params }: { params: Promise<{ sessionId: string 
           </Link>
         </>
       ) : null}
+
+      {s.mine && (s.status === "CONFIRMED" || s.status === "STARTED") ? <TeamsTable sessionId={s.id} /> : null}
 
       {s.status === "STARTED" ? null : !s.claimed ? (
         <section className="rounded-xl border border-line bg-card p-4">
