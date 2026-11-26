@@ -17,7 +17,8 @@ export const t = {
   level: {
     names: ["Level 1", "Level 2", "Level 3", "Level 4"],
     intro: "Pick a subject to see who is inside now and when your turn is.",
-    change: "Change level",
+    /** The name of the level switcher, for a screen reader. */
+    switch: "Level",
     today: "Today",
     other: "Other days",
   },
@@ -37,14 +38,14 @@ export const t = {
     breakOver: "the break is running a little over; the TA will be back soon.",
   },
   alert: {
+    yourTurn: "Your turn",
     title: "Alert me when my turn is near",
-    help: "Keep this page open. You will hear a sound when two teams or fewer are ahead of you, and again when you are called.",
+    sound: "Sound alerts",
+    help: "A sound when two teams or fewer are ahead of you, and again when you are called. Keep this page open.",
     teamLabel: "Your team number",
     follow: "Follow this team",
     following: "Following team",
     stop: "Change team",
-    enable: "Turn on alerts",
-    enabled: "Alerts are on",
     notHere: "This team is not in the queue right now.",
     near: (position: number) =>
       position === 1
@@ -70,6 +71,9 @@ export const t = {
   },
   subject: {
     sessions: "Discussions",
+    /** Under a subject's title: how many discussions, and how many are live. */
+    summary: (total: number, live: number) =>
+      `${total === 1 ? "1 discussion" : `${total} discussions`}${live > 0 ? ` · ${live} live now` : ""}`,
     empty: {
       title: "No open discussions",
       body: "They will show here once the TA confirms the schedule.",
@@ -80,6 +84,10 @@ export const t = {
     back: "Subject",
     downloadSheet: "Download the sheet (PDF)",
     scheduleTitle: "Schedule",
+    starts: "Starts",
+    teams: "Teams",
+    firstSlot: "First slot",
+    lastSlot: "Last slot",
     readOnly: "The schedule is read-only. The live queue starts when the TA starts the discussion.",
     team: "Team",
     time: "Time",
@@ -95,7 +103,21 @@ export const t = {
     inside: "In discussion now",
     secondsLeft: "seconds",
     mainTitle: "Queue",
-    lateTitle: "Late",
+    /** The two tabs read "Main queue" and "Late queue"; a narrow phone drops the second word. */
+    tabMain: "Main",
+    tabLate: "Late",
+    tabQueue: "queue",
+    queues: "Queues",
+    you: "You",
+    /** Under a long queue: "1–8 of 15". */
+    of: "of",
+    previousTeams: "Previous teams",
+    nextTeams: "Next teams",
+    showMine: "Show my team",
+    next: "Next",
+    soon: "Soon",
+    waiting: "Waiting",
+    about: "about",
     emptyMain: "Nobody is waiting",
     emptyLate: "No late teams",
     position: "Position",
@@ -111,13 +133,12 @@ export const t = {
     movedTo: "moved to",
     notDiscussedTitle: "Not discussed",
     notDiscussedHint: "If you still want a discussion, ask another TA of this subject.",
-    mine: "Your team",
     connectionLost: "The connection dropped. We are trying again and refreshing the page now and then.",
     connecting: "Connecting…",
     live: "Live",
   },
   leader: {
-    signInPrompt: "Are you a team leader? Sign in with Google to follow your turn.",
+    signInPrompt: "Are you a team leader? Sign in to answer the call from here.",
     signIn: "Sign in with Google",
     working: "…",
     codeTitle: "Bind your team",
@@ -141,7 +162,7 @@ export const t = {
   },
   search: {
     label: "Find your team",
-    placeholder: "Leader ID, leader name or team number",
+    placeholder: "ID, name or team number",
     button: "Search",
     searching: "Searching…",
     invalid: "Type the full ID (9 digits), a team number, or at least 3 letters of the name.",
@@ -149,6 +170,62 @@ export const t = {
     failed: "Could not search right now. Try again.",
     foundIn: "with",
     more: "There are more results. Type the full name or the ID.",
+  },
+  landing: {
+    nav: { how: "How it works", leaders: "Team leaders", faq: "Questions", open: "Open the queue" },
+    kicker: "For students and team leaders",
+    headline: "Know when it’s",
+    headlineMark: "your turn.",
+    sub: "See who is inside now and where your team stands. Keep the page open and you will hear a sound when two teams or fewer are ahead of you.",
+    cta: "Pick your level",
+    note: "No account needed to watch. Only team leaders sign in.",
+    /** The small numbered label above each section's title. */
+    sections: { start: "Start here", how: "How it works", get: "What you get", leaders: "Team leaders", faq: "Questions" },
+    closing: "Your team is",
+    closingMark: "on the board.",
+    stepsTitle: "Three taps to your place in the queue",
+    steps: [
+      { title: "Pick your level and subject", body: "Tap your level, then the subject you have a discussion in. No account, nothing to install." },
+      { title: "Find your team", body: "Search by leader ID, leader name or team number. You see the TA, the day and your slot." },
+      { title: "Follow your turn", body: "Turn on alerts and keep the page open. You hear a sound when your turn is near, and again when you are called." },
+    ],
+    featuresTitle: "Built for the minutes before you go in",
+    features: {
+      live: { title: "Live, without refreshing", body: "The team inside, the main queue and the late queue update on their own. Your team carries a You tag." },
+      pace: { title: "An honest wait", body: "See how far the TA is from the schedule, and when a break ends." },
+      sound: { title: "A sound when you are near", body: "Two teams or fewer ahead of you, then again when you are called." },
+      late: { title: "Missed your slot?", body: "Ask for a new turn and wait in the late queue." },
+      sheet: { title: "The sheet, one tap away", body: "Every open discussion carries its sheet as a PDF." },
+    },
+    leadersTitle: "Leading a team?",
+    leadersMark: "Answer the call",
+    leadersTail: "from your phone.",
+    leadersBody: "Sign in with Google, type the team code from the discussion sheet, and press I am coming when your team is called.",
+    faqTitle: "Before you ask",
+    faq: [
+      { q: "Do I need to sign in?", a: "No. Anyone can watch a queue and follow a team by its number. Only team leaders sign in, with Google, to answer the call or ask for a new turn." },
+      { q: "Will I hear the alert on silent?", a: "No. On silent you will not hear the sound, so watch the screen. Keep the page open, and turn on “Keep the screen on” if you like." },
+      { q: "What if my team is late?", a: "A team that misses its slot can ask for a new turn and wait in the late queue. If the TA has set a limit, a team later than that cannot ask; only the TA can bring it back." },
+      { q: "Where is my team code?", a: "It is on the discussion sheet. Download the sheet from the discussion’s card." },
+    ],
+    footLevels: "Levels",
+    /** The picture of a live discussion on the landing page. Invented names, never real students. */
+    demo: {
+      subject: "Operating Systems",
+      ta: "Eng. Sara Ibrahim",
+      label: "Lab 204",
+      inside: { number: 12, leaderName: "Omar Khaled", seconds: 42 },
+      main: [
+        { number: 13, leaderName: "Nour Hassan", time: "8:30 AM" },
+        { number: 14, leaderName: "Salma Tarek", time: "8:40 AM" },
+        { number: 15, leaderName: "Karim Mostafa", time: "8:50 AM" },
+        { number: 16, leaderName: "Mariam Adel", time: "9:00 AM" },
+        { number: 17, leaderName: "Ziad Samy", time: "9:10 AM" },
+      ],
+      late: [{ number: 9, leaderName: "Ahmed Fathy", time: null }],
+      mine: 14,
+      breakBack: "1:30 PM",
+    },
   },
   state: {
     errorTitle: "Something went wrong",
@@ -173,13 +250,13 @@ export function teamsCount(n: number): string {
   return n === 0 ? "No teams" : n === 1 ? "1 team" : `${n} teams`;
 }
 
-export function sessionsCount(n: number): string {
-  return n === 0 ? "No discussions" : n === 1 ? "1 discussion" : `${n} discussions`;
+/** The word beside a discussion's team count. */
+export function teamsWord(n: number): string {
+  return n === 1 ? "team" : "teams";
 }
 
-/** The first two words of a name, for a one-line cell. */
-export function shortName(name: string): string {
-  return name.trim().split(/\s+/).slice(0, 2).join(" ");
+export function sessionsCount(n: number): string {
+  return n === 0 ? "No discussions" : n === 1 ? "1 discussion" : `${n} discussions`;
 }
 
 /** Whole minutes, at least 1, for an estimate in seconds. */
@@ -187,16 +264,27 @@ export function minutesOf(seconds: number): number {
   return Math.max(1, Math.round(seconds / 60));
 }
 
+/** Keeps a time and its AM or PM on one line. */
+const joined = (time: string) => time.replace(/ (?=[AP]M$)/i, "\u00a0");
+
 /** A schedule time is already written the English way, for example "8:20 AM". */
 export function formatTime(time: string | null): string {
-  return time ?? "";
+  return time ? joined(time) : "";
 }
 
 /** An instant as a clock time in Cairo, for example "1:30 PM". */
 export function clockTime(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
-  return new Intl.DateTimeFormat("en-GB", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Africa/Cairo" }).format(d);
+  return joined(new Intl.DateTimeFormat("en-GB", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Africa/Cairo" }).format(d));
+}
+
+/** YYYY-MM-DD as the three lines of a calendar tile: "Thu", "26", "Nov". */
+export function dateParts(date: string): { weekday: string; day: string; month: string } {
+  const d = new Date(`${date}T12:00:00Z`);
+  if (Number.isNaN(d.getTime())) return { weekday: "", day: date, month: "" };
+  const part = (options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-GB", { ...options, timeZone: "UTC" }).format(d);
+  return { weekday: part({ weekday: "short" }), day: part({ day: "numeric" }), month: part({ month: "short" }) };
 }
 
 /** YYYY-MM-DD as a long date. */

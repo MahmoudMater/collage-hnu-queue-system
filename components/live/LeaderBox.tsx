@@ -10,7 +10,11 @@ import type { LiveSnapshot } from "@/lib/types";
 import { useSecondsLeft } from "@/lib/use-live-board";
 import type { MyTeam } from "@/lib/use-my-team";
 
-/** Above the live board: sign in, bind a team with its code, answer the call, ask for a new turn. */
+/**
+ * The team leader's part of the Your turn card: what needs action now (the
+ * call, a missed slot), which the card lifts to its top, and the account at
+ * its foot (sign in, bind a team with its code, sign out).
+ */
 export function LeaderBox({
   sessionId,
   subjectId,
@@ -51,24 +55,65 @@ export function LeaderBox({
   if (me.state.status === "loading") return null;
   if (me.state.status === "anonymous")
     return (
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line bg-card px-3 py-2 text-sm">
-        <span className="text-muted">{L.signInPrompt}</span>
+      <div className="dq-turn__foot dq-turn__row">
+        <span>{L.signInPrompt}</span>
         <button
           type="button"
           onClick={() => void startStudentSignIn(`/sessions/${sessionId}`)}
-          className="rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-background"
+          className="dq-btn dq-btn--quiet"
         >
           {L.signIn}
         </button>
       </div>
     );
 
-  const button = "rounded-lg px-4 py-3 text-base font-medium disabled:opacity-40";
+  const missed = mine?.status === "MISSED";
   return (
-    <div className="space-y-2">
+    <>
+      {asked || comingNow || missed || waitingLate || message ? (
+        <div className="dq-turn__urgent">
+          {asked ? (
+            <div className="dq-call">
+              <p className="dq-call__text">{L.yourTurn}</p>
+              <div className="dq-call__row">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void run(() => studentPost(`/api/v1/discussions/leader/sessions/${sessionId}/coming`))}
+                  className="dq-btn dq-btn--go dq-btn--lg"
+                >
+                  {L.coming}
+                </button>
+                {left !== null ? <span className="dq-call__secs">{left}</span> : null}
+              </div>
+            </div>
+          ) : null}
+          {comingNow ? <p className="dq-notice dq-notice--ok">{L.comingDone}</p> : null}
+          {missed ? (
+            <div className="dq-notice dq-notice--info">
+              <p>{L.missed}</p>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => void run(() => studentPost(`/api/v1/discussions/leader/sessions/${sessionId}/re-request`))}
+                className="dq-btn dq-btn--primary mt-2"
+              >
+                {L.askAgain}
+              </button>
+            </div>
+          ) : null}
+          {waitingLate ? <p className="dq-notice">{L.queued}</p> : null}
+          {message ? (
+            <p role="alert" className="dq-notice">
+              {message}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       {number === null ? (
         <form
-          className="rounded-lg border border-line bg-card p-3"
+          className="dq-turn__foot"
           onSubmit={(e) => {
             e.preventDefault();
             void run(async () => {
@@ -78,69 +123,33 @@ export function LeaderBox({
             });
           }}
         >
-          <p className="text-sm font-medium">{L.codeTitle}</p>
-          <p className="text-xs text-muted">{L.codeHelp}</p>
-          <div className="mt-2 flex gap-2">
+          <p className="dq-label">{L.codeTitle}</p>
+          <p className="dq-help">{L.codeHelp}</p>
+          <div className="dq-field mt-2">
             <input
               value={code}
               onChange={(e) => setCode(e.target.value)}
               placeholder={L.codePlaceholder}
+              aria-label={L.codeTitle}
               autoComplete="off"
               dir="ltr"
-              className="min-w-0 flex-1 rounded-lg border border-line bg-background px-3 py-2 text-base uppercase"
+              className="dq-input dq-input--code"
             />
-            <button type="submit" disabled={busy || code.trim().length < 4} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-background disabled:opacity-40">
+            <button type="submit" disabled={busy || code.trim().length < 4} className="dq-btn dq-btn--primary">
               {busy ? L.working : L.bind}
             </button>
           </div>
         </form>
       ) : (
-        <div className="flex items-center justify-between text-xs text-muted">
+        <div className="dq-turn__foot dq-turn__row">
           <span>
             {L.bound} {number}
           </span>
-          <button type="button" className="text-accent" onClick={() => void studentSignOut().then(me.reload)}>
+          <button type="button" className="dq-btn dq-btn--quiet" onClick={() => void studentSignOut().then(me.reload)}>
             {L.signOut}
           </button>
         </div>
       )}
-
-      {asked ? (
-        <div className="rounded-xl border border-info bg-info-soft p-3 text-info">
-          <p className="text-sm font-medium">{L.yourTurn}</p>
-          <div className="mt-2 flex items-center justify-between gap-3">
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() => void run(() => studentPost(`/api/v1/discussions/leader/sessions/${sessionId}/coming`))}
-              className={`${button} bg-ok text-background`}
-            >
-              {L.coming}
-            </button>
-            {left !== null ? <span className="text-3xl font-medium tabular-nums">{left}</span> : null}
-          </div>
-        </div>
-      ) : null}
-      {comingNow ? <p className="rounded-lg bg-ok-soft px-3 py-2 text-sm text-ok">{L.comingDone}</p> : null}
-      {mine?.status === "MISSED" ? (
-        <div className="rounded-lg bg-info-soft px-3 py-2 text-info">
-          <p className="text-sm">{L.missed}</p>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => void run(() => studentPost(`/api/v1/discussions/leader/sessions/${sessionId}/re-request`))}
-            className={`${button} mt-2 bg-accent text-background`}
-          >
-            {L.askAgain}
-          </button>
-        </div>
-      ) : null}
-      {waitingLate ? <p className="rounded-lg bg-idle-soft px-3 py-2 text-sm text-idle">{L.queued}</p> : null}
-      {message ? (
-        <p role="alert" className="rounded-lg bg-idle-soft px-3 py-2 text-sm">
-          {message}
-        </p>
-      ) : null}
-    </div>
+    </>
   );
 }

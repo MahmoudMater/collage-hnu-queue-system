@@ -1,0 +1,611 @@
+/*
+ * Component styles, from the Discussion queue design system (its components/bundle.css),
+ * without the options this site does not use. Every colour, radius, space and font is a
+ * variable from globals.css. Put the class "dq" on the body.
+ */
+
+/* ── Base ───────────────────────────────────────────────────────────────────── */
+.dq, .dq *, .dq *::before, .dq *::after { box-sizing: border-box; }
+.dq {
+  margin: 0; background: var(--background); color: var(--foreground);
+  font-family: var(--font-sans); font-size: 16px; line-height: 24px;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+:where(.dq) :where(h1, h2, h3) { text-wrap: balance; }
+:where(.dq) :where(p, li, summary) { text-wrap: pretty; }
+.dq-nowrap { white-space: nowrap; }
+.dq :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.dq-muted { color: var(--muted); }
+.dq-num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+/* accent is the text colour itself, so a link that stands alone is underlined */
+.dq-link, .dq .dq-btn--quiet { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+:is(.dq-link, .dq .dq-btn--quiet):hover { text-decoration-color: currentColor; }
+.dq-link { color: var(--accent); font-weight: 500; }
+/* a link that stands alone, not inside a sentence */
+.dq-state__action .dq-link, .dq-feat__demo .dq-link, .dq-header__links a, .dq-footer nav a { display: inline-flex; align-items: center; min-height: 44px; }
+.dq-stack { display: flex; flex-direction: column; gap: var(--space-3); }
+.dq-stack--sm { gap: var(--space-2); }
+.dq-stack--md { gap: var(--space-4); }
+.dq-stack--lg { gap: var(--space-5); }
+@keyframes dq-pulse { 50% { opacity: .3; } }
+
+/* ── Logo ───────────────────────────────────────────────────────────────────── */
+.dq-mark { display: block; flex: none; }
+.dq-mark__tile { fill: var(--brand); rx: calc(var(--radius-md) * 1.5); }
+.dq-mark__b { fill: var(--signal); }
+.dq-mark__cut { fill: var(--brand); }
+.dq-logo {
+  display: inline-flex; align-items: center; gap: 10px; color: var(--foreground);
+  font-family: var(--font-display); font-size: 18px; line-height: 1; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap;
+  min-height: 44px;
+}
+.dq-logo--lg { gap: 14px; font-size: 28px; }
+
+/* ── Button ─────────────────────────────────────────────────────────────────── */
+.dq-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: 44px; padding: 0 var(--space-4); border: 1px solid transparent; border-radius: var(--radius-md);
+  background: transparent; font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 600;
+  white-space: nowrap; cursor: pointer; transition: transform .12s ease, filter .12s ease, border-color .12s ease;
+}
+.dq-btn:hover { filter: brightness(1.08); }
+.dq-btn:active { transform: translateY(1px); }
+.dq-btn[disabled] { opacity: .4; cursor: not-allowed; filter: none; transform: none; }
+.dq .dq-btn--primary { background: var(--primary); color: var(--on-primary); }
+.dq .dq-btn--secondary { background: var(--card); border-color: var(--line-strong); color: var(--foreground); }
+.dq .dq-btn--go { background: var(--ok); color: var(--background); }
+/* a text button: looks 20px tall, is 44px to the finger */
+.dq .dq-btn--quiet { min-height: 44px; margin: -12px calc(var(--space-2) * -1); padding: 0 var(--space-2); color: var(--accent); font-weight: 500; }
+.dq-btn--lg { min-height: 52px; padding: 0 var(--space-5); font-size: 16px; line-height: 24px; }
+.dq-btn--block { width: 100%; }
+
+/* ── Field ──────────────────────────────────────────────────────────────────── */
+.dq-label { display: block; font-size: 14px; line-height: 20px; font-weight: 600; }
+.dq-help { font-size: 12px; line-height: 16px; color: var(--muted); }
+.dq-field { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.dq-field > .dq-btn { flex: 1 0 auto; }
+.dq-input {
+  min-width: 0; flex: 999 1 260px; min-height: 44px; padding: 0 var(--space-3);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-md); background: var(--background);
+  font-size: 16px; line-height: 24px;
+}
+.dq-input::placeholder { color: var(--muted); opacity: 1; }
+/* on a card or panel the well matches its ground, so an empty field does not read as disabled */
+:is(.dq-card, .dq-panel) .dq-input { background: var(--card); }
+.dq-input--code { font-family: var(--font-num); text-transform: uppercase; letter-spacing: .12em; }
+.dq-input--code::placeholder { text-transform: none; letter-spacing: 0; font-family: var(--font-sans); }
+.dq-check { display: flex; align-items: center; gap: var(--space-2); font-size: 12px; line-height: 16px; color: var(--muted); }
+.dq-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); }
+
+/* ── Status badge, notice, pace ─────────────────────────────────────────────── */
+.dq-badge {
+  display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 2px 10px;
+  border-radius: var(--radius-pill); background: var(--idle-soft); color: var(--idle);
+  font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap;
+}
+.dq-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.dq-badge--ok { background: var(--ok-soft); color: var(--ok); }
+.dq-badge--info { background: var(--info-soft); color: var(--info); }
+.dq-badge--danger { background: var(--danger-soft); color: var(--danger); }
+.dq-badge--live::before { animation: dq-ping 1.8s ease-out infinite; }
+
+.dq-notice {
+  padding: 9px var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--idle-soft); color: var(--idle);
+  font-size: 14px; line-height: 20px;
+}
+.dq-notice--ok { border-color: transparent; background: var(--ok-soft); color: var(--ok); }
+.dq-notice--info { border-color: transparent; background: var(--info-soft); color: var(--info); }
+.dq-notice--danger { border-color: transparent; background: var(--danger-soft); color: var(--danger); }
+.dq-notice--strong { font-size: 16px; line-height: 24px; font-weight: 600; }
+
+.dq-pace { display: flex; align-items: center; gap: var(--space-2); font-size: 14px; line-height: 20px; color: var(--muted); }
+.dq-pace::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.dq-pace--late { color: var(--info); }
+
+/* ── Page shell ─────────────────────────────────────────────────────────────── */
+/* The bar: it floats over the page, stays at the top as you scroll, and lines up with the column. */
+.dq-header {
+  position: sticky; top: var(--space-3); z-index: 20;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  width: min(1168px, calc(100% - var(--space-4) * 2)); min-height: 56px; margin: var(--space-3) auto 0; padding: 0 var(--space-2) 0 var(--space-4);
+  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--card) 76%, transparent); -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3);
+}
+/* one column for every screen: full width on a phone, up to 1200px on a desktop */
+.dq-page { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-6) var(--space-4); }
+/* every screen: the header, the page, the footer at the bottom of the window */
+.dq-shell { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+.dq-shell > .dq-page, .dq-shell > main { flex: 1; }
+.dq-shell > .dq-wrap { width: 100%; }
+/* list screens lay their cards in a grid: one column on a phone, up to three on a desktop */
+.dq-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); grid-auto-rows: 1fr; gap: var(--space-3); }
+/* the way back: a drawn arrow in a small tile, then where it leads. 44px to the finger. */
+.dq-back { display: inline-flex; align-items: center; gap: var(--space-2); max-width: 100%; margin: -8px 0; padding: 8px 0; font-size: 14px; line-height: 20px; font-weight: 500; color: var(--foreground); }
+.dq-back__icon { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--card); transition: background .12s ease, color .12s ease, border-color .12s ease; }
+.dq-back__icon svg { display: block; width: 16px; height: 16px; }
+.dq-back__kind { color: var(--muted); font-weight: 400; }
+.dq-back:hover .dq-back__icon { border-color: var(--brand); background: var(--brand); color: var(--signal); }
+.dq-back + .dq-titlebar { margin-top: var(--space-3); }
+/* a desktop has the room: the screen's title steps up to the display size */
+@media (min-width: 900px) {
+  .dq-titlebar .title { font-size: 40px; line-height: 44px; letter-spacing: -0.03em; }
+  .dq-titlebar + .dq-intro { margin-top: var(--space-2); font-size: 16px; line-height: 24px; }
+}
+/* the badge drops under the title when the two do not fit on one line */
+.dq-titlebar { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: var(--space-2) var(--space-3); margin-top: var(--space-2); }
+.dq-titlebar > :first-child { min-width: 0; }
+.dq-titlebar--center { align-items: center; }
+/* the level switcher: four squares beside the title, the current one filled */
+.dq-seg { display: flex; flex: none; gap: var(--space-1); padding: 3px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--card); }
+.dq-seg a { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius-sm); font-family: var(--font-num); font-size: 16px; line-height: 1; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--muted); transition: background .12s ease, color .12s ease; }
+.dq-seg a:hover { background: var(--idle-soft); color: var(--foreground); }
+.dq-seg a[aria-current="page"] { background: var(--brand); color: var(--signal); }
+.dq-intro { margin-top: var(--space-1); font-size: 14px; line-height: 20px; color: var(--muted); }
+.dq-section-title { display: flex; align-items: baseline; gap: 6px; margin-bottom: var(--space-2); color: var(--muted); }
+
+/* ── Cards and lists ────────────────────────────────────────────────────────── */
+.dq-card { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--card); }
+.dq-card--pad { padding: var(--space-4); }
+.dq-panel { padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--card); }
+.dq-panel__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-3); }
+
+.dq-levels { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.dq-level {
+  display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-5); min-height: 120px;
+  padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--card);
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.dq-level__n { font-family: var(--font-num); font-size: 44px; line-height: 44px; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.dq-level__l { display: flex; align-items: flex-end; justify-content: space-between; font-size: 14px; line-height: 20px; font-weight: 600; }
+/* the step meter: four rising bars, as many lit as the level */
+.dq-level__steps { display: flex; flex: none; align-items: flex-end; gap: 3px; height: 18px; }
+.dq-level__steps i { width: 5px; border-radius: 1px; background: currentColor; opacity: .22; transition: background .15s ease; }
+.dq-level__steps i:nth-child(1) { height: 6px; } .dq-level__steps i:nth-child(2) { height: 10px; }
+.dq-level__steps i:nth-child(3) { height: 14px; } .dq-level__steps i:nth-child(4) { height: 18px; }
+.dq-level__steps i.is-on { opacity: 1; }
+.dq-level:hover { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.dq-level:hover .dq-level__n { color: var(--signal); }
+.dq-level:hover .dq-level__steps i.is-on { background: var(--signal); }
+
+/* A subject: its number in the level, its name large, and under a hairline how many discussions it has, with one
+   square per discussion. Every tile is the same size: the name holds two lines at most. The same hover as a level tile. */
+.dq-subject {
+  display: flex; flex-direction: column; height: 100%; min-height: 188px;
+  padding: var(--space-4) var(--space-5); border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--card);
+  transition: background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease;
+}
+.dq-subject__n { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--idle-soft); color: var(--idle); font-family: var(--font-num); font-size: 16px; line-height: 1; font-weight: 600; font-variant-numeric: tabular-nums; transition: background .15s ease, color .15s ease; }
+.dq-subject__name { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: auto; padding-top: var(--space-4); font-family: var(--font-display); font-size: 22px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; overflow-wrap: break-word; }
+.dq-subject__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--line); font-size: 14px; line-height: 20px; color: var(--muted); }
+.dq-subject__dots { display: flex; flex: none; gap: 4px; }
+.dq-subject__dots i { width: 8px; height: 8px; border-radius: 2px; background: var(--foreground); transition: background .15s ease; }
+.dq-subject--none .dq-subject__name { color: var(--muted); }
+.dq-subject:hover { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.dq-subject:hover .dq-subject__n { background: var(--signal); color: var(--on-signal); }
+.dq-subject:hover .dq-subject__name { color: var(--on-brand); }
+.dq-subject:hover .dq-subject__foot { border-color: color-mix(in srgb, var(--on-brand) 22%, transparent); color: var(--on-brand); }
+.dq-subject:hover .dq-subject__dots i { background: var(--signal); }
+/* a phone: one tile per row, a little shorter */
+@media (max-width: 600px) { .dq-subject { min-height: 156px; } }
+
+/* A discussion in a subject's agenda: a calendar tile, the TA and the place, its status with the pace under it,
+   how many teams, and the sheet. One line on a wide row; on a phone the status drops under the name.
+   A live discussion's tile is `signal`. Every row shares the same columns, so the list reads like a board. */
+.dq-session { display: grid; grid-template-columns: minmax(0, 1fr) 64px; align-items: center; overflow: hidden; container-type: inline-size; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--card); transition: border-color .12s ease; }
+.dq-session:hover { border-color: var(--line-strong); }
+.dq-session__main { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; grid-template-areas: "date who who" "date state count"; align-items: start; gap: var(--space-2) var(--space-4); padding: var(--space-4); }
+.dq-session__date { grid-area: date; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 64px; height: 72px; border-radius: var(--radius-md); background: var(--idle-soft); color: var(--idle); font-size: 12px; line-height: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.dq-session__date b { font-family: var(--font-num); font-size: 26px; line-height: 30px; font-weight: 600; letter-spacing: 0; color: var(--foreground); font-variant-numeric: tabular-nums; }
+.dq-session--live .dq-session__date { background: var(--signal); color: var(--on-signal); }
+.dq-session--live .dq-session__date b { color: var(--on-signal); }
+.dq-session__who { grid-area: who; min-width: 0; }
+.dq-session__ta { font-family: var(--font-display); font-size: 20px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em; overflow-wrap: break-word; }
+.dq-session__meta { margin-top: 2px; font-size: 14px; line-height: 20px; color: var(--muted); }
+/* the status as plain words with its dot, and the pace as a second line under it: no pill, no box */
+.dq-session__state { grid-area: state; min-width: 0; }
+.dq-session__state :is(.dq-pace, .dq-notice) { display: block; margin-top: 2px; padding: 0; border: 0; background: none; font-size: 14px; line-height: 20px; }
+.dq-session__state .dq-pace::before { display: none; }
+.dq-status { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 14px; line-height: 20px; font-weight: 600; color: var(--idle); white-space: nowrap; }
+.dq-status::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.dq-status--ok { color: var(--ok); }
+.dq-status--info { color: var(--info); }
+.dq-status--live::before { animation: dq-ping 1.8s ease-out infinite; }
+.dq-session__count { grid-area: count; align-self: end; display: flex; align-items: baseline; justify-content: flex-end; gap: 6px; font-size: 14px; line-height: 20px; color: var(--muted); white-space: nowrap; }
+.dq-session__count b { font-family: var(--font-num); font-size: 24px; line-height: 28px; font-weight: 600; color: var(--foreground); font-variant-numeric: tabular-nums; }
+/* the sheet: a square icon button, the same recipe as the back link's tile */
+.dq-session__sheet { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--card); color: var(--foreground); transition: background .12s ease, color .12s ease, border-color .12s ease; }
+.dq-session__sheet svg { width: 18px; height: 18px; }
+.dq-session__sheet:hover { border-color: var(--brand); background: var(--brand); color: var(--signal); }
+@container (min-width: 760px) {
+  .dq-session__main { grid-template-columns: 64px minmax(0, 1fr) 300px 104px; grid-template-areas: "date who state count"; align-items: center; column-gap: var(--space-5); padding: var(--space-4) var(--space-5); }
+  .dq-session__count { align-self: center; }
+}
+/* a phone: a discussion with no sheet does not keep an empty column */
+@media (max-width: 700px) {
+  .dq-session { grid-template-columns: minmax(0, 1fr) auto; }
+  .dq-session__sheet { margin-inline-end: var(--space-4); }
+}
+
+/* the head of a screen that has a tool: the title on the left, the tool (the team search) beside it on a desktop */
+.dq-pagehead { display: grid; gap: var(--space-5); }
+.dq-pagehead > * { min-width: 0; }
+@media (min-width: 900px) {
+  .dq-pagehead { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: var(--space-8); align-items: start; }
+}
+
+/* the schedule of a discussion that has not started: one tile per slot, the time first, read left to right */
+.dq-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr)); gap: var(--space-2); }
+.dq-slot { display: flex; flex-direction: column; gap: var(--space-2); min-height: 92px; padding: var(--space-3) var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--card); }
+.dq-slot__time { font-family: var(--font-num); font-size: 20px; line-height: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.dq-slot__team { display: flex; align-items: center; gap: var(--space-2); margin-top: auto; font-size: 14px; line-height: 20px; font-weight: 600; }
+.dq-slot__name { font-size: 12px; line-height: 16px; color: var(--muted); overflow-wrap: break-word; }
+.dq-slot--you { border-color: var(--accent); background: var(--accent-soft); }
+.dq-slot--you .dq-slot__name { color: var(--foreground); }
+/* a short list of team numbers (not discussed): the same tiles */
+.dq-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.dq-chips li { display: grid; place-items: center; min-width: 40px; height: 40px; padding: 0 var(--space-2); border-radius: var(--radius-sm); background: var(--idle-soft); color: var(--idle); font-family: var(--font-num); font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.dq-hit { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-1) var(--space-3); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: var(--accent-soft); color: var(--accent); }
+.dq-hit > :first-child { flex: 1 1 12rem; min-width: 0; }
+.dq-hit__team { font-weight: 600; }
+.dq-hit__meta { display: block; font-size: 12px; line-height: 16px; }
+.dq-hit__time { flex: none; font-family: var(--font-num); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.dq-state { padding: var(--space-8) var(--space-5); text-align: center; }
+.dq-state p { max-width: 520px; margin-inline: auto; }
+.dq-state p { margin-top: var(--space-1); font-size: 14px; line-height: 20px; color: var(--muted); }
+.dq-state__action { margin-top: var(--space-4); }
+/* a page that is not there, or would not load: its code, large, in the call colour */
+.dq-state .dq-state__code { margin: 0 0 var(--space-3); font-family: var(--font-num); font-size: 72px; line-height: 72px; font-weight: 600; letter-spacing: -0.04em; color: var(--signal); font-variant-numeric: tabular-nums; }
+.dq-state--page { max-width: 576px; margin: var(--space-12) auto 0; padding: var(--space-12) var(--space-6); background: var(--brand); border-color: var(--line); color: var(--on-brand); }
+.dq-state--page p:not([class]) { color: var(--on-brand); }
+/* an empty list: three ghost rows where the real ones will appear */
+.dq-state__ghost { display: grid; gap: 6px; width: min(240px, 100%); margin: 0 auto var(--space-5); }
+.dq-state__ghost i { height: 24px; border: 1px dashed var(--line-strong); border-radius: var(--radius-md); }
+.dq-state__ghost i:nth-child(2) { opacity: .6; }
+.dq-state__ghost i:nth-child(3) { opacity: .3; }
+.dq-skel { height: 72px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--card); animation: dq-skel 2s ease-in-out infinite; }
+@keyframes dq-skel { 50% { opacity: .55; } }
+
+/* ── Live board ─────────────────────────────────────────────────────────────── */
+.dq-inside { padding: var(--space-4); border: 1px solid var(--brand); border-radius: var(--radius-lg); background: var(--brand); color: var(--on-brand); }
+/* dark: a brand block is darker than the page, so it carries an edge */
+@media (prefers-color-scheme: dark) {
+  .dq-inside { border-color: var(--line); }
+  .dq-level:hover, .dq-subject:hover { border-color: var(--line-strong); }
+  .dq-skel { border-color: var(--line-strong); }
+  .dq-back:hover .dq-back__icon, .dq-session__sheet:hover { border-color: var(--line-strong); }
+}
+.dq-inside__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.dq-inside__label { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.dq-inside__body { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-3); }
+.dq-inside__team { font-family: var(--font-display); font-size: 44px; line-height: 44px; font-weight: 700; letter-spacing: -0.02em; color: var(--signal); font-variant-numeric: tabular-nums; }
+.dq-inside__name { margin-top: var(--space-1); font-size: 14px; line-height: 20px; }
+.dq-inside__timer { text-align: end; }
+.dq-inside__secs { display: block; font-family: var(--font-num); font-size: 30px; line-height: 36px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.dq-inside__unit { font-size: 12px; line-height: 16px; }
+.dq-inside__hint { margin-top: var(--space-3); font-size: 12px; line-height: 16px; }
+.dq-inside--mine { outline: 2px solid var(--signal); outline-offset: -2px; }
+.dq-inside--empty { padding: var(--space-5) var(--space-4); border-color: var(--line); background: var(--card); color: var(--muted); text-align: center; }
+/* The live screen, top to bottom on a phone: the TA's pace, who is inside, your own tools, then the queue.
+   On a desktop who is inside becomes a banner across the page, the queue takes the wide left column and your
+   tools a narrower right one that stays in view. */
+.dq-live { display: grid; gap: var(--space-4); }
+.dq-live > * { min-width: 0; }
+.dq-live__hero { container-type: inline-size; }
+.dq-live > :empty { display: none; }
+@media (min-width: 900px) {
+  .dq-live { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-5) var(--space-6); align-items: start; }
+  .dq-live__pace, .dq-live__hero { grid-column: 1 / -1; }
+  .dq-live__tools { grid-column: 2; grid-row: 3; }
+  .dq-live__queue { grid-column: 1; grid-row: 3; }
+  .dq-live--solo .dq-live__queue { grid-column: 1 / -1; }
+}
+@media (min-width: 900px) and (min-height: 760px) {
+  .dq-live__tools { position: sticky; top: var(--space-4); }
+}
+/* the board's figures (waiting, late): shown only on the banner, a phone has them on the queue's tabs */
+.dq-inside__stats { display: none; }
+/* the banner: who is inside on the left, read from across the room; the board's figures on the right */
+@container (min-width: 700px) {
+  .dq-inside { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-8); align-items: center; padding: var(--space-6) var(--space-8); }
+  .dq-inside > * { grid-column: 1; }
+  .dq-inside__top { justify-content: flex-start; }
+  .dq-inside__body { align-items: flex-end; margin-top: var(--space-4); }
+  .dq-inside__team { font-size: 72px; line-height: 72px; font-weight: 800; letter-spacing: -0.04em; }
+  .dq-inside__name { margin-top: var(--space-2); font-size: 16px; line-height: 24px; }
+  .dq-inside__secs { font-size: 44px; line-height: 44px; }
+  .dq-inside__unit, .dq-inside__hint { font-size: 14px; line-height: 20px; }
+  .dq-inside__stats { display: flex; grid-column: 2; grid-row: 1 / span 3; align-self: stretch; align-items: center; }
+  .dq-inside__stat { display: flex; flex-direction: column; justify-content: center; align-self: stretch; min-width: 120px; padding: 0 var(--space-6); border-inline-start: 1px solid color-mix(in srgb, currentColor 22%, transparent); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+  .dq-inside__stat b { font-family: var(--font-num); font-size: 44px; line-height: 48px; font-weight: 600; letter-spacing: 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .dq-inside__stat--text b { font-size: 26px; }
+  .dq-inside--empty { display: block; padding: var(--space-8); font-size: 18px; line-height: 28px; }
+}
+
+/* The queue: one list of full-width rows. With the late queue on, two tabs sit above it. */
+.dq-queue { min-width: 0; container-type: inline-size; }
+.dq-queue__title { display: flex; align-items: baseline; gap: 6px; margin-bottom: var(--space-2); color: var(--muted); }
+.dq-tabs { display: flex; gap: var(--space-4); margin-bottom: var(--space-3); border-bottom: 1px solid var(--line); }
+.dq-tab {
+  display: inline-flex; align-items: center; gap: var(--space-2); min-height: 44px; margin-bottom: -1px; padding: 0;
+  border: 0; border-bottom: 2px solid transparent; background: none; font-size: 14px; line-height: 20px; font-weight: 600;
+  color: var(--muted); white-space: nowrap; cursor: pointer;
+}
+.dq-tab:hover { color: var(--foreground); }
+/* a 320px phone: the tabs read “Main” and “Late”; the full name stays in the accessible label */
+@container (max-width: 300px) { .dq-tab__w { display: none; } }
+.dq-tab[aria-selected="true"] { border-bottom-color: var(--foreground); color: var(--foreground); }
+.dq-tab__n { min-width: 24px; padding: 2px 6px; border-radius: var(--radius-pill); background: var(--idle-soft); color: var(--idle); font-family: var(--font-num); font-size: 12px; line-height: 16px; font-weight: 600; font-variant-numeric: tabular-nums; text-align: center; }
+/* marks the student's own team: on its row, and on the tab that holds it */
+.dq-you { flex: none; padding: 0 6px; border-radius: var(--radius-sm); background: var(--primary); color: var(--on-primary); font-family: var(--font-sans); font-size: 12px; line-height: 18px; font-weight: 600; letter-spacing: 0; }
+.dq-queue__list { display: flex; flex-direction: column; gap: 6px; }
+.dq-queue__empty { padding: var(--space-4) var(--space-3); border: 1px dashed var(--line-strong); border-radius: var(--radius-lg); text-align: center; font-size: 14px; line-height: 20px; color: var(--muted); }
+.dq-qrow {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; column-gap: var(--space-3);
+  width: 100%; min-height: 58px; padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2);
+  border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--card); text-align: start; cursor: pointer;
+}
+.dq-qrow:hover { border-color: var(--line-strong); }
+/* a row with nothing more to open is not a button */
+.dq-qrow--static { cursor: default; }
+.dq-qrow--static:hover { border-color: var(--line); }
+.dq-qrow--static.dq-qrow--you:hover { border-color: var(--accent); }
+/* the position tile carries the state colour; the word at the end of the row says it */
+.dq-qrow__pos { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--idle-soft); color: var(--idle); font-family: var(--font-num); font-size: 16px; line-height: 1; font-weight: 600; font-variant-numeric: tabular-nums; }
+.dq-qrow__who { min-width: 0; }
+.dq-qrow__team { display: flex; align-items: center; gap: var(--space-2); font-weight: 600; }
+.dq-qrow__name { display: block; text-align: left; font-size: 14px; line-height: 20px; color: var(--muted); overflow-wrap: break-word; }
+.dq-qrow__tag { display: block; font-size: 12px; line-height: 16px; font-weight: 500; color: var(--info); }
+.dq-qrow__end { text-align: end; white-space: nowrap; }
+.dq-qrow__time { display: block; font-family: var(--font-num); font-size: 14px; line-height: 20px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.dq-qrow__state { display: block; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--muted); }
+.dq-qrow__more { grid-column: 1 / -1; display: block; margin-top: var(--space-2); padding-top: var(--space-2); border-top: 1px solid var(--line); font-size: 14px; line-height: 20px; }
+.dq-qrow__more > span { display: block; }
+/* a long queue comes eight teams at a time: which teams are showing, and one small control to move through them:
+   previous, the page, next, joined in a single frame. The buttons look 30px tall and are 44px to the finger. */
+.dq-pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-3); margin-top: var(--space-3); font-size: 12px; line-height: 16px; color: var(--muted); font-variant-numeric: tabular-nums; }
+/* which teams are showing: the range in the numerals face, and a small track with the part on show lit */
+.dq-pager__info { display: flex; align-items: center; gap: var(--space-3); }
+.dq-pager__range { font-family: var(--font-num); font-size: 12px; line-height: 16px; letter-spacing: .04em; text-transform: uppercase; }
+.dq-pager__range b { font-weight: 600; color: var(--foreground); }
+.dq-pager__track { position: relative; flex: none; width: 72px; height: 4px; overflow: hidden; border-radius: 2px; background: var(--idle-soft); }
+.dq-pager__track i { position: absolute; top: 0; bottom: 0; border-radius: 2px; background: var(--signal); transition: left .25s cubic-bezier(.2, .8, .2, 1), width .25s cubic-bezier(.2, .8, .2, 1); }
+.dq-pager__nav { display: inline-flex; align-items: center; margin-inline-start: auto; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--card); }
+.dq-pager__page { min-width: 52px; padding: 0 var(--space-2); border-inline: 1px solid var(--line); font-family: var(--font-num); font-size: 12px; line-height: 30px; font-weight: 600; text-align: center; color: var(--foreground); }
+.dq-pager__btn { position: relative; display: grid; place-items: center; width: 32px; height: 30px; padding: 0; border: 0; background: none; color: var(--foreground); cursor: pointer; transition: background .12s ease, color .12s ease; }
+.dq-pager__btn:first-child { border-radius: calc(var(--radius-md) - 1px) 0 0 calc(var(--radius-md) - 1px); }
+.dq-pager__btn:last-child { border-radius: 0 calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px) 0; }
+.dq-pager__btn::before { content: ""; position: absolute; inset: -7px -3px; }
+.dq-pager__btn svg { width: 14px; height: 14px; }
+.dq-pager__btn:hover:not([disabled]) { background: var(--signal); color: var(--on-signal); }
+.dq-pager__btn[disabled] { color: var(--line-strong); cursor: not-allowed; }
+.dq-qrow--next .dq-qrow__pos { background: var(--ok-soft); color: var(--ok); }
+.dq-qrow--next .dq-qrow__state { color: var(--ok); }
+.dq-qrow--soon .dq-qrow__pos { background: var(--info-soft); color: var(--info); }
+.dq-qrow--soon .dq-qrow__state { color: var(--info); }
+.dq-qrow--you { border-color: var(--accent); background: var(--accent-soft); }
+.dq-qrow--you .dq-qrow__name, .dq-qrow--you.dq-qrow--wait .dq-qrow__state, .dq-qrow--you.dq-qrow--late .dq-qrow__state { color: var(--foreground); }
+
+/* Your turn: one card for everything on the live screen that is about you. Its parts are divided by hairlines,
+   and the call to come in is lifted to the top whatever the order in the markup. */
+.dq-turn { display: flex; flex-direction: column; gap: 1px; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--line); }
+.dq-turn > * { padding: var(--space-4); background: var(--card); }
+.dq-turn__head { display: flex; flex-direction: column; gap: var(--space-2); }
+.dq-turn__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: 20px; }
+.dq-turn__label { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.dq-turn__team { font-family: var(--font-display); font-size: 28px; line-height: 32px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+/* before a team is followed: the question, what you get, and one field */
+.dq-turn__ask { font-family: var(--font-display); font-size: 20px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em; }
+/* one field: a bell, the team number as you type it (any number of digits), and the button inside its end.
+   On a narrow card the button drops under the number and fills the row. */
+.dq-follow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); margin-top: var(--space-2); padding: 5px 5px 5px var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--radius-md); background: var(--background); }
+.dq-follow:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+.dq-follow > svg { flex: none; width: 20px; height: 20px; color: var(--muted); }
+.dq .dq-follow input { flex: 999 1 140px; min-width: 0; min-height: 44px; padding: 0; border: 0; outline: 0; background: none; font-family: var(--font-num); font-size: 24px; line-height: 28px; font-weight: 600; color: var(--foreground); font-variant-numeric: tabular-nums; }
+.dq-follow input::placeholder { font-family: var(--font-sans); font-size: 16px; font-weight: 400; color: var(--muted); opacity: 1; }
+.dq-follow > .dq-btn { flex: 1 0 auto; }
+.dq-turn__urgent { order: -1; display: flex; flex-direction: column; gap: var(--space-2); }
+.dq-turn__foot { background: var(--sunken); }
+.dq-turn__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-4); }
+.dq-turn__row > :first-child { flex: 1 1 180px; min-width: 0; font-size: 14px; line-height: 20px; color: var(--muted); }
+.dq-turn__name { display: block; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--foreground); }
+/* a switch: the whole row is the button, so it is easy to hit; the track only shows the state */
+.dq-toggle { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); width: 100%; min-height: 52px; border: 0; text-align: start; cursor: pointer; }
+.dq-toggle > :first-child { min-width: 0; }
+.dq-switch { position: relative; flex: none; width: 44px; height: 26px; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); background: var(--idle-soft); transition: background .15s ease, border-color .15s ease; }
+.dq-switch::after { content: ""; position: absolute; top: 3px; inset-inline-start: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--muted); transition: transform .15s ease, background .15s ease; }
+.dq-toggle[aria-checked="true"] .dq-switch { border-color: var(--primary); background: var(--primary); }
+.dq-toggle[aria-checked="true"] .dq-switch::after { transform: translateX(18px); background: var(--on-primary); }
+
+.dq-call { padding: var(--space-4); border-radius: var(--radius-lg); background: var(--signal); color: var(--on-signal); }
+.dq-call__text { font-size: 16px; line-height: 24px; font-weight: 600; }
+.dq-call__row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-3); }
+.dq-call__secs { font-family: var(--font-num); font-size: 44px; line-height: 44px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.dq .dq-call .dq-btn--go { background: var(--on-signal); color: var(--signal); }
+
+/* ── Landing page ───────────────────────────────────────────────────────────── */
+.dq-wrap { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-4); }
+.dq-header__links { display: flex; align-items: center; gap: var(--space-2); font-size: 14px; line-height: 20px; font-weight: 500; }
+/* a link in the bar: the call colour is drawn under it as the pointer arrives */
+.dq-header__links a:not(.dq-btn) { position: relative; padding: 0 var(--space-3); color: var(--muted); transition: color .15s ease; }
+.dq-header__links a:not(.dq-btn)::after { content: ""; position: absolute; inset: auto var(--space-3) 9px; height: 2px; border-radius: 1px; background: var(--signal); transform: scaleX(0); transform-origin: left; transition: transform .2s cubic-bezier(.2, .8, .2, 1); }
+.dq-header__links a:not(.dq-btn):hover { color: var(--foreground); }
+.dq-header__links a:not(.dq-btn):hover::after { transform: scaleX(1); }
+.dq-header__links .dq-btn { margin-inline-start: var(--space-2); }
+.dq-lp__hero { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: var(--space-12); padding: var(--space-12) 0 var(--space-16); }
+.dq-lp__kicker { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-3); margin-bottom: var(--space-5); color: var(--muted); }
+.dq-hl { padding: 0 .12em; border-radius: var(--radius-sm); background: linear-gradient(var(--signal), var(--signal)) no-repeat left / 100% 100%; color: var(--on-signal); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.dq-lp__sub { max-width: 520px; margin-top: var(--space-5); font-size: 18px; line-height: 28px; color: var(--muted); }
+.dq-lp__cta { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
+.dq-lp__note { margin-top: var(--space-4); font-size: 14px; line-height: 20px; color: var(--muted); }
+.dq-lp__demo { position: relative; margin-inline-end: var(--space-4); }
+.dq-lp__demo::before { content: ""; position: absolute; inset: var(--space-6) calc(var(--space-4) * -1) calc(var(--space-4) * -1) var(--space-6); border-radius: var(--radius-lg); background: var(--signal); }
+.dq-lp__demo > .dq-card { position: relative; padding: var(--space-4); }
+.dq-lp__demohead { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-3); }
+.dq-lp__section { padding: var(--space-16) 0; border-top: 1px solid var(--line); }
+.dq-lp__head { max-width: 760px; margin-bottom: var(--space-12); }
+/* every section is numbered, like a platform */
+.dq-lp__index { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); font-family: var(--font-num); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.dq-lp__index b { padding: 2px 6px; border-radius: var(--radius-sm); background: var(--signal); color: var(--on-signal); font-weight: 600; }
+.dq-lp h1, .dq-lp h2 { text-wrap: balance; }
+.dq-lp__head p { margin-top: var(--space-3); font-size: 18px; line-height: 28px; color: var(--muted); }
+.dq-lp__levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); }
+/* on the landing page the level is the picture: a tall tile, the numeral very large */
+.dq-lp__levels .dq-level { min-height: 220px; padding: var(--space-5); }
+.dq-lp__levels .dq-level__n { font-family: var(--font-display); font-size: 112px; line-height: 96px; font-weight: 800; letter-spacing: -0.05em; }
+.dq-lp__levels .dq-level__l { font-size: 16px; line-height: 24px; }
+/* three stops on one line */
+.dq-lp__steps { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); padding-top: var(--space-8); }
+.dq-lp__steps::before { content: ""; position: absolute; top: 5px; left: 0; right: 0; height: 2px; background: var(--line-strong); }
+.dq-step { position: relative; }
+.dq-step::before { content: ""; position: absolute; top: calc(var(--space-8) * -1); left: 0; width: 12px; height: 12px; border-radius: var(--radius-sm); background: var(--signal); box-shadow: 0 0 0 4px var(--background); }
+.dq-step__n { font-family: var(--font-num); font-size: 44px; line-height: 44px; font-weight: 600; letter-spacing: -0.02em; color: var(--foreground); font-variant-numeric: tabular-nums; }
+.dq-step h3 { margin-top: var(--space-3); }
+.dq-step p:not([class]) { margin-top: var(--space-2); color: var(--muted); }
+/* what you get: one board, a row per feature. A numbered tile, what it is, and a small picture of it at the end.
+   The same language as the queue and the agenda; the tile takes the call colour under the pointer. */
+.dq-feats { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--card); }
+.dq-feat { display: grid; grid-template-columns: 56px minmax(0, 5fr) minmax(0, 6fr); align-items: center; gap: var(--space-4) var(--space-6); padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--line); transition: background .15s ease; }
+.dq-feat:last-child { border-bottom: 0; }
+.dq-feat:hover { background: color-mix(in srgb, var(--foreground) 4%, var(--card)); }
+.dq-feat__n { display: grid; place-items: center; width: 56px; height: 56px; border-radius: var(--radius-md); background: var(--idle-soft); color: var(--idle); font-family: var(--font-num); font-size: 20px; line-height: 1; font-weight: 600; font-variant-numeric: tabular-nums; transition: background .15s ease, color .15s ease; }
+.dq-feat:hover .dq-feat__n { background: var(--signal); color: var(--on-signal); }
+.dq-feat p:not([class]) { margin-top: var(--space-1); color: var(--muted); }
+.dq-feat__demo { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+/* the team leaders' band is the call itself: the whole block in the call colour, the demo inverted on it */
+.dq-lp__band { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: var(--space-12); padding: var(--space-12); border-radius: var(--radius-lg); background: var(--signal); color: var(--on-signal); }
+.dq-lp__band .dq-lp__index { color: var(--on-signal); }
+.dq-lp__band .dq-lp__index b { background: var(--on-signal); color: var(--signal); }
+.dq-lp__band .dq-call { background: var(--on-signal); color: var(--signal); animation: none; }
+.dq .dq-lp__band .dq-call .dq-btn--go { background: var(--signal); color: var(--on-signal); }
+.dq-lp__band p:not([class]) { margin-top: var(--space-3); font-size: 18px; line-height: 28px; }
+.dq-lp__band em { padding: 0 .12em; border-radius: var(--radius-sm); background: var(--on-signal); font-style: normal; color: var(--signal); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.dq-state .heading { margin: 0; }
+.dq-lp__faq { max-width: 760px; }
+.dq-lp__faq details { border-bottom: 1px solid var(--line); }
+.dq-lp__faq summary { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-4) 0; font-weight: 600; cursor: pointer; list-style: none; }
+.dq-lp__faq summary::-webkit-details-marker { display: none; }
+.dq-lp__faq summary::after { content: "+"; flex: none; display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); font-family: var(--font-num); font-size: 18px; line-height: 1; color: var(--foreground); transition: background .15s ease, color .15s ease, border-color .15s ease; }
+.dq-lp__faq details[open] summary::after { content: "−"; border-color: var(--signal); background: var(--signal); color: var(--on-signal); }
+.dq-lp__faq details p { max-width: 620px; padding-bottom: var(--space-4); color: var(--muted); }
+/* the last word before the footer */
+.dq-lp__close { text-align: center; }
+.dq-lp__close .dq-lp__cta { justify-content: center; }
+.dq-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-8) 0; border-top: 1px solid var(--line); font-size: 14px; line-height: 20px; color: var(--muted); }
+.dq-footer nav { display: flex; gap: var(--space-5); }
+
+@media (min-width: 1024px) {
+  .dq-lp__section--split > .dq-wrap { display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-12); align-items: start; }
+  .dq-lp__section--split .dq-lp__head { margin-bottom: 0; }
+  .dq-lp__section--split .dq-lp__faq { max-width: none; }
+}
+@media (min-width: 360px) {
+  .dq-lp__band em { white-space: nowrap; }
+}
+@media (max-width: 820px) {
+  .dq-lp .display-xl { font-size: 44px; line-height: 46px; }
+  .dq-lp .display-lg { font-size: 30px; line-height: 34px; }
+  .dq-header__links a:not(.dq-btn) { display: none; }
+  .dq-lp__hero, .dq-lp__band { grid-template-columns: 1fr; gap: var(--space-8); }
+  .dq-lp__hero { padding: var(--space-6) 0 var(--space-12); }
+  .dq-lp__sub, .dq-lp__head p, .dq-lp__band p:not([class]) { font-size: 16px; line-height: 24px; }
+  .dq-lp__demo { margin-inline-end: var(--space-2); }
+  .dq-lp__demo::before { inset: var(--space-4) calc(var(--space-2) * -1) calc(var(--space-2) * -1) var(--space-4); }
+  .dq-lp__section { padding: var(--space-12) 0; }
+  .dq-lp__head { margin-bottom: var(--space-6); }
+  .dq-feat { grid-template-columns: 56px minmax(0, 1fr); padding: var(--space-4); }
+  .dq-feat__demo { grid-column: 1 / -1; }
+  .dq-lp__band { padding: var(--space-6); }
+}
+/* phones */
+@media (max-width: 600px) {
+  .dq-lp__cta .dq-btn { flex: 1 1 100%; }
+  .dq-lp__levels { grid-template-columns: 1fr 1fr; }
+  .dq-lp__steps { grid-template-columns: 1fr; gap: var(--space-8); padding-top: 0; padding-inline-start: var(--space-8); }
+  .dq-lp__steps::before { top: 0; bottom: 0; left: 5px; right: auto; width: 2px; height: auto; }
+  .dq-step::before { top: var(--space-4); left: calc(var(--space-8) * -1); }
+  .dq-lp__levels .dq-level { min-height: 160px; }
+  .dq-lp__levels .dq-level__n { font-size: 80px; line-height: 72px; }
+}
+/* under 420px the hero's own button is the way in */
+@media (max-width: 420px) {
+  .dq-header .dq-btn { display: none; }
+  .dq-header { top: var(--space-2); margin-top: var(--space-2); }
+}
+/* a 320px phone: a three-digit team stays on one line beside the countdown */
+@media (max-width: 340px) {
+  .dq-inside__team { font-size: 32px; line-height: 36px; }
+}
+
+/* ── Life ─────────────────────────────────────────────────────────────────────
+   The site moves a little, and every movement says something: something is live, something arrived,
+   something changed place, you went deeper or came back. Nothing loops for decoration except the
+   board behind the page, which is slow and faint. With reduced motion, none of it runs. */
+
+/* the board behind every page: a dot matrix, and one slow warm light crossing it */
+.dq-bg::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none; background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--foreground) 11%, transparent) 1px, transparent 0); background-size: 24px 24px; -webkit-mask-image: linear-gradient(to bottom, #000 10%, transparent 85%); mask-image: linear-gradient(to bottom, #000 10%, transparent 85%); }
+.dq-bg::after { content: ""; position: fixed; top: -35vmax; left: 0; z-index: -1; width: 70vmax; height: 70vmax; border-radius: 50%; pointer-events: none; background: radial-gradient(closest-side, color-mix(in srgb, var(--signal) 13%, transparent), transparent); animation: dq-drift 32s ease-in-out infinite alternate; }
+@keyframes dq-drift { from { transform: translate(-25vw, 0); } to { transform: translate(65vw, 14vh); } }
+
+/* arriving: lists come in one after another */
+@keyframes dq-rise { from { opacity: 0; transform: translateY(10px); } }
+:is(.dq-grid, .dq-levels, .dq-lp__levels, ul.dq-stack, .dq-slots, .dq-chips) > * { animation: dq-rise .45s cubic-bezier(.2, .8, .2, 1) both; }
+:is(.dq-grid, .dq-levels, .dq-lp__levels, ul.dq-stack, .dq-slots, .dq-chips) > :nth-child(2) { animation-delay: .04s; }
+:is(.dq-grid, .dq-levels, .dq-lp__levels, ul.dq-stack, .dq-slots, .dq-chips) > :nth-child(3) { animation-delay: .08s; }
+:is(.dq-grid, .dq-levels, .dq-lp__levels, ul.dq-stack, .dq-slots, .dq-chips) > :nth-child(4) { animation-delay: .12s; }
+:is(.dq-grid, .dq-levels, .dq-lp__levels, ul.dq-stack, .dq-slots, .dq-chips) > :nth-child(5) { animation-delay: .16s; }
+:is(.dq-grid, .dq-levels, .dq-lp__levels, ul.dq-stack, .dq-slots, .dq-chips) > :nth-child(n + 6) { animation-delay: .2s; }
+.dq-notice, .dq-call, .dq-turn, .dq-queue__list { animation: dq-rise .35s cubic-bezier(.2, .8, .2, 1) both; }
+
+/* live: the dot sends out a ring; the call block asks for attention */
+@keyframes dq-ping { from { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 55%, transparent); } to { box-shadow: 0 0 0 7px transparent; } }
+@keyframes dq-callring { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--signal) 60%, transparent); } to { box-shadow: 0 0 0 12px transparent; } }
+.dq-call { animation: dq-rise .35s cubic-bezier(.2, .8, .2, 1) both, dq-callring 1.6s ease-out .35s infinite; }
+
+/* a new team inside: the number flips in like a board flap */
+@keyframes dq-flip { from { opacity: 0; transform: perspective(600px) rotateX(-75deg); } }
+.dq-inside__team { transform-origin: 50% 100%; animation: dq-flip .55s cubic-bezier(.2, .8, .2, 1) both; }
+
+/* the mark: its three dots type, now and then */
+@keyframes dq-typing { 0%, 12%, 100% { transform: none; } 6% { transform: translateY(-3px); } }
+.dq-mark__cut { transform-box: fill-box; animation: dq-typing 6s ease-in-out infinite; }
+.dq-mark__cut:nth-of-type(2) { animation-delay: .14s; }
+.dq-mark__cut:nth-of-type(3) { animation-delay: .28s; }
+
+/* under the finger: tiles lift, the step meter climbs */
+.dq-level { transition: background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease; }
+.dq-level:hover, .dq-subject:hover { transform: translateY(-3px); }
+@keyframes dq-step { from { transform: scaleY(.35); } }
+.dq-level__steps i { transform-origin: 50% 100%; }
+.dq-level:hover .dq-level__steps i.is-on { animation: dq-step .35s cubic-bezier(.2, .8, .2, 1) both; }
+.dq-level:hover .dq-level__steps i:nth-child(2) { animation-delay: .05s; }
+.dq-level:hover .dq-level__steps i:nth-child(3) { animation-delay: .1s; }
+.dq-level:hover .dq-level__steps i:nth-child(4) { animation-delay: .15s; }
+
+/* the landing page: the highlight is drawn across the headline; sections arrive as they scroll into view */
+@keyframes dq-sweep { from { background-size: 0% 100%; color: inherit; } }
+.dq-hl { animation: dq-sweep .7s cubic-bezier(.2, .8, .2, 1) .25s both; }
+@supports (animation-timeline: view()) {
+  .dq-lp__head, .dq-step, .dq-feat, .dq-lp__band, .dq-lp__faq, .dq-lp__close h2 { animation: dq-rise linear both; animation-timeline: view(); animation-range: entry 0% entry 45%; }
+}
+
+/* between pages: going deeper slides in from the right, going back from the left, anything else fades.
+   The header keeps its place. The loading rows hand over to the real ones. */
+::view-transition-group(site-header) { animation: none; z-index: 20; }
+::view-transition-old(.nav-forward) { --dq-slide: -48px; animation: 140ms ease-in both dq-vt-fade reverse, 380ms ease-in-out both dq-vt-slide reverse; }
+::view-transition-new(.nav-forward) { --dq-slide: 48px; animation: 220ms ease-out 140ms both dq-vt-fade, 380ms ease-in-out both dq-vt-slide; }
+::view-transition-old(.nav-back) { --dq-slide: 48px; animation: 140ms ease-in both dq-vt-fade reverse, 380ms ease-in-out both dq-vt-slide reverse; }
+::view-transition-new(.nav-back) { --dq-slide: -48px; animation: 220ms ease-out 140ms both dq-vt-fade, 380ms ease-in-out both dq-vt-slide; }
+::view-transition-old(.page-fade) { animation: 140ms ease-in both dq-vt-fade reverse; }
+::view-transition-new(.page-fade) { animation: 240ms ease-out 140ms both dq-vt-fade; }
+::view-transition-old(.slide-down) { animation: 140ms ease-out both dq-vt-fade reverse, 140ms ease-out both dq-vt-drop reverse; }
+::view-transition-new(.slide-up) { animation: 220ms ease-in 140ms both dq-vt-fade, 380ms ease-out both dq-vt-drop; }
+@keyframes dq-vt-fade { from { opacity: 0; } }
+@keyframes dq-vt-slide { from { translate: var(--dq-slide) 0; } }
+@keyframes dq-vt-drop { from { translate: 0 10px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .dq *, .dq *::before, .dq *::after, .dq-bg::after { animation: none !important; transition: none !important; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}

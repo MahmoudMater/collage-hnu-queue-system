@@ -71,9 +71,10 @@ function makeSound(): Sound | null {
 }
 
 /**
- * Tells the student when the followed team is close to its turn (once) and
- * when it is being called (repeated until it answers). Sound needs one tap
- * first: browsers do not let a page make noise on its own.
+ * The top of the Your turn card. Tells the student when the followed team is
+ * close to its turn (once) and when it is being called (repeated until it
+ * answers). Sound needs one tap first: browsers do not let a page make noise
+ * on its own, so the sound switch starts off.
  */
 export function TurnAlert({
   board,
@@ -160,24 +161,30 @@ export function TurnAlert({
   if (team === null)
     return (
       <form
-        className="rounded-lg border border-line bg-card p-3"
+        className="dq-turn__head"
         onSubmit={(e) => {
           e.preventDefault();
           const number = Number(draft);
           if (Number.isInteger(number) && number > 0) onFollow(number);
         }}
       >
-        <p className="text-sm font-medium">{t.alert.title}</p>
-        <div className="mt-2 flex gap-2">
+        <div className="dq-turn__top">
+          <span className="dq-turn__label">{t.alert.yourTurn}</span>
+        </div>
+        <p className="dq-turn__ask">{t.alert.title}</p>
+        <p className="dq-help">{t.alert.help}</p>
+        <div className="dq-follow">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M4 11V7.3a4 4 0 0 1 8 0V11l1.3 1.6H2.7L4 11ZM6.6 14.4h2.8" />
+          </svg>
           <input
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             inputMode="numeric"
             placeholder={t.alert.teamLabel}
             aria-label={t.alert.teamLabel}
-            className="min-w-0 flex-1 rounded-lg border border-line bg-background px-3 py-2 text-base"
           />
-          <button type="submit" className="rounded-lg border border-line px-4 py-2 text-sm font-medium">
+          <button type="submit" className="dq-btn dq-btn--primary">
             {t.alert.follow}
           </button>
         </div>
@@ -185,53 +192,56 @@ export function TurnAlert({
     );
 
   return (
-    <div className="space-y-2 rounded-lg border border-line bg-card p-3">
-      <div className="flex items-center justify-between gap-3 text-sm">
-        <span className="font-medium">
-          {t.alert.following} {team}
-        </span>
-        {fixed ? null : (
-          <button type="button" className="text-accent" onClick={() => onFollow(null)}>
-            {t.alert.stop}
-          </button>
-        )}
-      </div>
-      {state === "now" ? (
-        <p role="alert" className="rounded-lg bg-info-soft px-3 py-2 text-base font-medium text-info">
-          {t.alert.now}
-        </p>
-      ) : state === "near" && queued ? (
-        <p role="status" className="rounded-lg bg-ok-soft px-3 py-2 text-sm font-medium text-ok">
-          {inLate ? t.alert.nearLate(queued.position) : t.alert.near(queued.position)}
-        </p>
-      ) : !queued && !isInside ? (
-        <p className="text-xs text-muted">{t.alert.notHere}</p>
-      ) : null}
-      {sound ? (
-        <p className="text-xs text-muted">
-          {t.alert.enabled}. {t.alert.silentHint} {canVibrate ? "" : t.alert.noVibration}
-        </p>
-      ) : (
-        <div>
-          <button
-            type="button"
-            className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-background"
-            onClick={() => {
-              const made = makeSound();
-              made?.beep(1);
-              // With no sound support the banner and the tab title still change.
-              setSound(made ?? { beep: () => undefined });
-            }}
-          >
-            {t.alert.enable}
-          </button>
-          <p className="mt-1 text-xs text-muted">{t.alert.help}</p>
+    <>
+      <div className="dq-turn__head">
+        <div className="dq-turn__top">
+          <span className="dq-turn__label">{t.alert.yourTurn}</span>
+          {fixed ? null : (
+            <button type="button" className="dq-btn dq-btn--quiet" onClick={() => onFollow(null)}>
+              {t.alert.stop}
+            </button>
+          )}
         </div>
-      )}
-      <label className="flex items-center gap-2 text-xs text-muted">
-        <input type="checkbox" checked={awake} onChange={(e) => setAwake(e.target.checked)} />
-        {t.alert.keepAwake}
-      </label>
-    </div>
+        <p className="dq-turn__team">
+          {t.session.team} {team}
+        </p>
+        {state === "now" ? (
+          <p role="alert" className="dq-notice dq-notice--info dq-notice--strong">
+            {t.alert.now}
+          </p>
+        ) : state === "near" && queued ? (
+          <p role="status" className="dq-notice dq-notice--ok font-semibold">
+            {inLate ? t.alert.nearLate(queued.position) : t.alert.near(queued.position)}
+          </p>
+        ) : !queued && !isInside ? (
+          <p className="dq-help">{t.alert.notHere}</p>
+        ) : null}
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={sound !== null}
+        className="dq-toggle"
+        onClick={() => {
+          if (sound) return setSound(null);
+          // Sound must start from a tap. With no sound support the banner and the tab title still change.
+          const made = makeSound();
+          made?.beep(1);
+          setSound(made ?? { beep: () => undefined });
+        }}
+      >
+        <span>
+          <span className="dq-turn__name">{t.alert.sound}</span>
+          <span className="dq-help">
+            {sound ? `${t.alert.silentHint}${canVibrate ? "" : ` ${t.alert.noVibration}`}` : t.alert.help}
+          </span>
+        </span>
+        <span className="dq-switch" aria-hidden="true" />
+      </button>
+      <button type="button" role="switch" aria-checked={awake} className="dq-toggle" onClick={() => setAwake(!awake)}>
+        <span className="dq-turn__name">{t.alert.keepAwake}</span>
+        <span className="dq-switch" aria-hidden="true" />
+      </button>
+    </>
   );
 }
