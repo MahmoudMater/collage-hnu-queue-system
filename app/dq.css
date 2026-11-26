@@ -306,15 +306,23 @@
 .dq-inside__stats { display: none; }
 /* the banner: who is inside on the left, read from across the room; the board's figures on the right */
 @container (min-width: 700px) {
-  .dq-inside { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-8); align-items: center; padding: var(--space-6) var(--space-8); }
+  /* three columns: who is inside, then the countdown, then the board's figures; the last two are cells of one strip */
+  .dq-inside { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; column-gap: 0; align-items: center; padding: var(--space-6) var(--space-8); }
   .dq-inside > * { grid-column: 1; }
   .dq-inside__top { justify-content: flex-start; }
-  .dq-inside__body { align-items: flex-end; margin-top: var(--space-4); }
+  /* the body gives its two children to the grid, so the countdown can stand beside the figures instead of under them */
+  .dq-inside__body { display: contents; }
+  .dq-inside__body > :first-child { grid-column: 1; margin-top: var(--space-4); }
   .dq-inside__team { font-size: 72px; line-height: 72px; font-weight: 800; letter-spacing: -0.04em; }
   .dq-inside__name { margin-top: var(--space-2); font-size: 16px; line-height: 24px; }
-  .dq-inside__secs { font-size: 44px; line-height: 44px; }
-  .dq-inside__unit, .dq-inside__hint { font-size: 14px; line-height: 20px; }
-  .dq-inside__stats { display: flex; grid-column: 2; grid-row: 1 / span 3; align-self: stretch; align-items: center; }
+  .dq-inside__hint { font-size: 14px; line-height: 20px; }
+  /* the countdown is one more cell: the same number, the same label, the same rule at its side */
+  .dq-inside__timer { grid-column: 2; grid-row: 1 / span 3; align-self: stretch; display: flex; flex-direction: column; justify-content: center; min-width: 120px; margin-inline-start: var(--space-8); padding: 0 var(--space-6); border-inline-start: 1px solid color-mix(in srgb, currentColor 22%, transparent); text-align: start; }
+  .dq-inside__secs { font-size: 44px; line-height: 48px; }
+  .dq-inside__unit { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+  .dq-inside__stats { display: flex; grid-column: 3; grid-row: 1 / span 3; align-self: stretch; align-items: center; }
+  /* without a countdown the figures keep their distance from the team */
+  .dq-inside:not(:has(.dq-inside__timer)) .dq-inside__stats { margin-inline-start: var(--space-8); }
   .dq-inside__stat { display: flex; flex-direction: column; justify-content: center; align-self: stretch; min-width: 120px; padding: 0 var(--space-6); border-inline-start: 1px solid color-mix(in srgb, currentColor 22%, transparent); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
   .dq-inside__stat b { font-family: var(--font-num); font-size: 44px; line-height: 48px; font-weight: 600; letter-spacing: 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .dq-inside__stat--text b { font-size: 26px; }

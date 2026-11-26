@@ -29,6 +29,7 @@ A full redesign of the site: a black and yellow look, a landing page, new layout
 
 - **Colours and type.** Black and yellow with warm neutrals, light and dark. Headlines are Bricolage Grotesque, text is IBM Plex Sans, numbers are IBM Plex Mono.
 - **Every page is wider on a desktop.** One 1200px column instead of a narrow one. Phones keep a single column.
+- **Inside-now banner.** On a wide screen the countdown is one of the banner's figures, beside Waiting and Late, with the same number and label. It used to sit lower, on its own.
 - **Level page.** Subjects are tiles of one size: a number, the subject's name, and one square per discussion.
 - **Subject page.** Discussions are rows led by a calendar tile, which is yellow when the discussion is live. Each row shows the TA, the place, the status, the pace and the team count, and a button for the sheet. The team search sits beside the title.
 - **Discussion page.** On a desktop the queue takes the wide left column and your own tools the right one, which stays in view.
