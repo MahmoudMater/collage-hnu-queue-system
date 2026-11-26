@@ -5,6 +5,8 @@ export type StatusWord = "NOT_STARTED" | "RUNNING" | "ENDED";
 export interface SubjectSummary {
   id: string;
   name: string;
+  /** 1 to 4; null until an admin sets it. */
+  level: number | null;
   sessionCount: number;
 }
 
@@ -20,10 +22,19 @@ export interface SessionCard {
   date: string;
   status: StatusWord;
   teamCount: number;
+  /** Running sessions only: minutes behind the schedule (negative: ahead, 0: on time); null when unknown. */
+  delayMinutes: number | null;
+  break: SessionBreak | null;
+}
+
+/** The TA is on a break. `until` may already be in the past: the break is running over. */
+export interface SessionBreak {
+  until: string;
+  reason: "PRAYER" | "LUNCH" | "OTHER" | null;
 }
 
 export interface SessionCardsResponse {
-  subject: { id: string; name: string };
+  subject: { id: string; name: string; level: number | null };
   sessions: SessionCard[];
 }
 
@@ -44,10 +55,28 @@ export interface SessionSnapshot {
     label: string | null;
     date: string;
     status: StatusWord;
+    /** Minutes after its slot in which a team may still ask for a new turn; null when always. */
+    lateCutoffMinutes: number | null;
+    break: SessionBreak | null;
   };
   seq: number;
   serverNow: string;
   teams: PublicTeam[];
+}
+
+export interface TeamSearchResult {
+  total: number;
+  results: {
+    sessionId: string;
+    taName: string;
+    label: string | null;
+    date: string;
+    sessionStatus: StatusWord;
+    number: number;
+    time: string | null;
+    status: string;
+    leaderName?: string;
+  }[];
 }
 
 export type QueueReason = "MOVED_IN" | "LATE" | null;
@@ -77,6 +106,8 @@ export interface LiveSnapshot extends SessionSnapshot {
   inside: InsideEntry | null;
   queues: { main: QueueItem[]; late: QueueItem[] };
   eta: { samples: number; medianSeconds: number | null };
+  /** Minutes behind the schedule (negative: ahead, 0: on time); null when unknown. */
+  delayMinutes: number | null;
   /** Teams sent to another TA; no leader name. */
   movedOut: { number: number; toTa: string | null }[];
 }

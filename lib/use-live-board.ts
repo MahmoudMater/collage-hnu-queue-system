@@ -8,6 +8,8 @@ import type { LiveBroadcast, LiveSnapshot } from "./types";
 export type Connection = "connecting" | "live" | "lost";
 
 const POLL_WHEN_LOST_MS = 5000;
+/** The delay behind the schedule changes with the clock alone, so the board is read again now and then. */
+const REFRESH_RUNNING_MS = 60_000;
 
 /**
  * Keeps one session's board up to date. The server sends a full board on
@@ -68,6 +70,13 @@ export function useLiveBoard(sessionId: string, initial: LiveSnapshot) {
     const timer = setInterval(() => void refetch(), POLL_WHEN_LOST_MS);
     return () => clearInterval(timer);
   }, [connection, refetch]);
+
+  const running = board.session.status === "RUNNING";
+  useEffect(() => {
+    if (!running) return;
+    const timer = setInterval(() => void refetch(), REFRESH_RUNNING_MS);
+    return () => clearInterval(timer);
+  }, [running, refetch]);
 
   return { board, offsetMs, connection };
 }

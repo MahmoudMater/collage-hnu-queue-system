@@ -1,132 +1,180 @@
 /**
- * Every user-facing string lives here, so the language can change without
- * touching components. The interface is Arabic and right to left for now.
+ * Every user-facing string lives here, so the wording can change without
+ * touching components. The site is in English and left to right.
  */
 import type { StatusWord } from "./types";
 
 export const t = {
-  appName: "طابور المناقشات",
+  appName: "Discussion queue",
   home: {
-    title: "المواد",
-    intro: "اختار المادة وشوف مين جوه دلوقتي ودورك إمتى.",
+    title: "Which level are you in?",
+    intro: "Pick your level to see its subjects, who is inside now and when your turn is.",
     empty: {
-      title: "مفيش مواد لسه",
-      body: "هتظهر هنا أول ما حد يضيف مادة.",
+      title: "No subjects yet",
+      body: "They will show here as soon as one is added.",
     },
+  },
+  level: {
+    names: ["Level 1", "Level 2", "Level 3", "Level 4"],
+    intro: "Pick a subject to see who is inside now and when your turn is.",
+    change: "Change level",
+    today: "Today",
+    other: "Other days",
+  },
+  schedule: {
+    /** What a student reads about the TA's pace; empty when there is nothing to say. */
+    delay: (minutes: number | null) =>
+      minutes === null
+        ? ""
+        : minutes === 0
+          ? "Running on time"
+          : minutes > 0
+            ? `Running about ${minutes} minutes behind`
+            : "Ahead of schedule",
+    breakReasons: { PRAYER: "prayer", LUNCH: "lunch", OTHER: "break" } as Record<string, string>,
+    onBreak: "The TA is on a break",
+    backAt: "back at",
+    breakOver: "the break is running a little over; the TA will be back soon.",
+  },
+  alert: {
+    title: "Alert me when my turn is near",
+    help: "Keep this page open. You will hear a sound when two teams or fewer are ahead of you, and again when you are called.",
+    teamLabel: "Your team number",
+    follow: "Follow this team",
+    following: "Following team",
+    stop: "Change team",
+    enable: "Turn on alerts",
+    enabled: "Alerts are on",
+    notHere: "This team is not in the queue right now.",
+    near: (position: number) =>
+      position === 1
+        ? "You are next! Stay at the door."
+        : `Your turn is near: ${position - 1} ${position - 1 === 1 ? "team" : "teams"} ahead of you.`,
+    /** A late team waits for a slot an on-time team leaves open, so a position is not a promise. */
+    nearLate: (position: number) =>
+      position === 1
+        ? "You are first in the late queue. You will be called as soon as a slot opens."
+        : `You are number ${position} in the late queue. Stay close.`,
+    now: "Your team is being called now!",
+    titleNear: "Your turn is near",
+    titleNow: "Your turn now!",
+    keepAwake: "Keep the screen on",
+    noVibration: "Your phone does not vibrate from the browser, so there is sound only.",
+    silentHint: "On silent you will not hear the sound, so watch the screen.",
+  },
+  latePolicy: {
+    notice: (minutes: number) =>
+      minutes === 0
+        ? "Note: a team that misses its slot cannot ask for a new turn. Only the TA can bring it back."
+        : `Note: a team more than ${minutes} minutes late cannot ask for a new turn. Only the TA can bring it back.`,
   },
   subject: {
-    sessions: "المناقشات",
+    sessions: "Discussions",
     empty: {
-      title: "مفيش مناقشات مفتوحة",
-      body: "هتظهر هنا أول ما المعيد يأكد الجدول.",
+      title: "No open discussions",
+      body: "They will show here once the TA confirms the schedule.",
     },
-    back: "كل المواد",
+    back: "All levels",
   },
   session: {
-    back: "المادة",
-    downloadSheet: "نزّل الشيت (PDF)",
-    scheduleTitle: "الجدول",
-    readOnly: "الجدول للقراءة بس. الطابور الحي بيبدأ لما المعيد يبدأ المناقشة.",
-    team: "تيم",
-    time: "الميعاد",
-    noTeams: "مفيش تيمات في الجدول.",
+    back: "Subject",
+    downloadSheet: "Download the sheet (PDF)",
+    scheduleTitle: "Schedule",
+    readOnly: "The schedule is read-only. The live queue starts when the TA starts the discussion.",
+    team: "Team",
+    time: "Time",
+    noTeams: "No teams in the schedule.",
   },
   live: {
-    insideTitle: "جوه دلوقتي",
-    nobodyInside: "مفيش حد جوه دلوقتي",
-    asking: "بنسأل تيم",
-    askingHint: "عنده وقت يرد قبل ما الدور يعدّي",
-    coming: "جاي دلوقتي",
-    comingHint: "المفروض يوصل قبل ما الوقت يخلص",
-    inside: "بيناقش دلوقتي",
-    secondsLeft: "ثانية",
-    mainTitle: "الطابور",
-    lateTitle: "المتأخرين",
-    emptyMain: "مفيش حد مستني",
-    emptyLate: "مفيش متأخرين",
-    position: "الدور",
-    scheduledAt: "ميعاده",
-    expectedIn: "متوقع بعد حوالي",
-    expectedBetween: "متوقع بعد",
-    minutes: "دقيقة",
-    now: "دوره دلوقتي",
-    movedIn: "اتنقل من مناقشة تانية",
-    late: "متأخر",
-    ended: "المناقشة خلصت.",
-    movedTitle: "اتنقلوا",
-    movedTo: "اتنقل لعند",
-    notDiscussedTitle: "ماتناقشوش",
-    notDiscussedHint: "لو لسه عايزين تناقشوا، اطلبوا مناقشة عند معيد تاني.",
-    mine: "تيمك",
-    connectionLost: "الاتصال اتقطع. بنحاول نرجع وبنحدّث الصفحة كل شوية.",
-    connecting: "بنوصّل…",
-    live: "مباشر",
+    insideTitle: "Inside now",
+    nobodyInside: "Nobody is inside now",
+    asking: "Calling team",
+    askingHint: "It has a short time to answer before the turn passes",
+    coming: "On the way",
+    comingHint: "It should arrive before the time runs out",
+    inside: "In discussion now",
+    secondsLeft: "seconds",
+    mainTitle: "Queue",
+    lateTitle: "Late",
+    emptyMain: "Nobody is waiting",
+    emptyLate: "No late teams",
+    position: "Position",
+    scheduledAt: "Slot",
+    expectedIn: "expected in about",
+    expectedBetween: "expected in",
+    minutes: "min",
+    now: "It is its turn now",
+    movedIn: "Moved from another discussion",
+    late: "Late",
+    ended: "The discussion has ended.",
+    movedTitle: "Moved",
+    movedTo: "moved to",
+    notDiscussedTitle: "Not discussed",
+    notDiscussedHint: "If you still want a discussion, ask another TA of this subject.",
+    mine: "Your team",
+    connectionLost: "The connection dropped. We are trying again and refreshing the page now and then.",
+    connecting: "Connecting…",
+    live: "Live",
   },
   leader: {
-    signInPrompt: "إنت leader تيم؟ ادخل بحساب Google عشان تتابع دورك.",
-    signIn: "ادخل بحساب Google",
+    signInPrompt: "Are you a team leader? Sign in with Google to follow your turn.",
+    signIn: "Sign in with Google",
     working: "…",
-    codeTitle: "اربط تيمك",
-    codeHelp: "اكتب كود تيمك (موجود في شيت المناقشة).",
-    codePlaceholder: "مثلاً K7M2QX",
-    bind: "اربط",
-    bound: "تيمك مربوط:",
-    signOut: "خروج",
-    yourTurn: "دورك! لو إنت قدام الباب اضغط جاي.",
-    coming: "أنا جاي",
-    comingDone: "تمام، المعيد مستنيك. ادخل بسرعة.",
-    missed: "فاتك دورك. لو لسه عايز تناقش اطلب دور جديد.",
-    askAgain: "اطلب دور جديد",
-    queued: "إنت دلوقتي في طابور المتأخرين. هنندهلك لما فيه مكان فاضي.",
-    notInSession: "تيمك مش في المناقشة دي.",
-    notEligible: "الحساب ده مش مسجّل كطالب معتمد. كمّل تسجيلك في الموقع الرئيسي الأول.",
-    signInFailed: "الدخول ماتمش. جرّب تاني.",
-    callbackWorking: "بنكمّل الدخول…",
-    tryLater: "جرّب بعد",
-    seconds: "ثانية",
+    codeTitle: "Bind your team",
+    codeHelp: "Type your team code (it is on the discussion sheet).",
+    codePlaceholder: "For example K7M2QX",
+    bind: "Bind",
+    bound: "Your team:",
+    signOut: "Sign out",
+    yourTurn: "Your turn! If you are at the door, press I am coming.",
+    coming: "I am coming",
+    comingDone: "Good, the TA is waiting for you. Go in now.",
+    missed: "You missed your slot. If you still want a discussion, ask for a new turn.",
+    askAgain: "Ask for a new turn",
+    queued: "You are in the late queue now. You will be called when there is a free slot.",
+    notInSession: "Your team is not in this discussion.",
+    notEligible: "This account is not an approved student. Finish your registration on the main site first.",
+    signInFailed: "Sign-in did not finish. Try again.",
+    callbackWorking: "Finishing sign-in…",
+    tryLater: "try again in",
+    seconds: "seconds",
   },
   search: {
-    label: "دوّر على رقم تيمك",
-    placeholder: "مثلاً 21",
-    button: "دوّر",
-    searching: "بدوّر…",
-    invalid: "اكتب رقم التيم بالأرقام.",
-    notFound: "التيم ده مش موجود في أي مناقشة هنا.",
-    failed: "مقدرتش أدوّر دلوقتي. جرّب تاني.",
-    foundIn: "موجود عند",
+    label: "Find your team",
+    placeholder: "Leader ID, leader name or team number",
+    button: "Search",
+    searching: "Searching…",
+    invalid: "Type the full ID (9 digits), a team number, or at least 3 letters of the name.",
+    notFound: "No team with these details in this subject's discussions.",
+    failed: "Could not search right now. Try again.",
+    foundIn: "with",
+    more: "There are more results. Type the full name or the ID.",
   },
   state: {
-    errorTitle: "حصلت مشكلة",
-    errorBody: "مقدرناش نجيب البيانات دلوقتي.",
-    retry: "جرّب تاني",
-    notFoundTitle: "الصفحة دي مش موجودة",
-    notFoundBody: "اللينك ممكن يكون قديم أو المناقشة لسه ماتأكدتش.",
-    goHome: "ارجع للمواد",
-    loading: "بحمّل…",
+    errorTitle: "Something went wrong",
+    errorBody: "We could not load the data right now.",
+    retry: "Try again",
+    notFoundTitle: "This page does not exist",
+    notFoundBody: "The link may be old, or the discussion is not confirmed yet.",
+    goHome: "Back to the levels",
+    loading: "Loading…",
   },
 } as const;
 
 export const leaderText = t.leader;
 
 export const statusLabel: Record<StatusWord, string> = {
-  NOT_STARTED: "لسه ماابتدتش",
-  RUNNING: "شغالة",
-  ENDED: "خلصت",
+  NOT_STARTED: "Not started",
+  RUNNING: "Live",
+  ENDED: "Ended",
 };
 
-/** "4 تيمات", "تيم واحد": plain Arabic count words for small numbers. */
 export function teamsCount(n: number): string {
-  if (n === 0) return "مفيش تيمات";
-  if (n === 1) return "تيم واحد";
-  if (n === 2) return "تيمين";
-  return `${n} ${n <= 10 ? "تيمات" : "تيم"}`;
+  return n === 0 ? "No teams" : n === 1 ? "1 team" : `${n} teams`;
 }
 
 export function sessionsCount(n: number): string {
-  if (n === 0) return "مفيش مناقشات";
-  if (n === 1) return "مناقشة واحدة";
-  if (n === 2) return "مناقشتين";
-  return `${n} ${n <= 10 ? "مناقشات" : "مناقشة"}`;
+  return n === 0 ? "No discussions" : n === 1 ? "1 discussion" : `${n} discussions`;
 }
 
 /** The first two words of a name, for a one-line cell. */
@@ -139,232 +187,36 @@ export function minutesOf(seconds: number): number {
   return Math.max(1, Math.round(seconds / 60));
 }
 
-/** Presentation only: show the schedule time with Arabic AM and PM markers. */
+/** A schedule time is already written the English way, for example "8:20 AM". */
 export function formatTime(time: string | null): string {
-  if (!time) return "";
-  return time.replace(/\s?AM$/i, " ص").replace(/\s?PM$/i, " م");
+  return time ?? "";
 }
 
-/** YYYY-MM-DD as a long Arabic date with Latin digits. */
+/** An instant as a clock time in Cairo, for example "1:30 PM". */
+export function clockTime(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return new Intl.DateTimeFormat("en-GB", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Africa/Cairo" }).format(d);
+}
+
+/** YYYY-MM-DD as a long date. */
 export function formatDate(date: string): string {
   const d = new Date(`${date}T12:00:00Z`);
   if (Number.isNaN(d.getTime())) return date;
-  return new Intl.DateTimeFormat("ar-EG-u-nu-latn", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    timeZone: "UTC",
-  }).format(d);
+  return new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(d);
 }
 
-/** TA and admin screens. */
-export const ta = {
-  nav: { link: "المعيد", signOut: "خروج", signedInAs: "داخل بحساب" },
-  signIn: {
-    title: "دخول المعيد",
-    body: "ادخل بحساب Google بتاع الكلية عشان تجهّز مناقشاتك.",
-    button: "ادخل بحساب Google",
-    working: "بنحوّلك لـ Google…",
-    failed: "الدخول ماتمش. جرّب تاني.",
-    callbackWorking: "بنكمّل الدخول…",
-    notEligible: "الحساب ده مش مسموح له يدخل كمعيد.",
-    studentEmail: "الإيميل ده مسجّل كطالب، استخدم حساب المعيد.",
-    unavailable: "الدخول مش متاح دلوقتي. جرّب بعد شوية.",
-    needsConfirmation: "وصلك إيميل تأكيد. أكّد الدخول منه وارجع هنا.",
-    needed: "لازم تدخل الأول عشان تكمّل.",
-  },
-  home: {
-    title: "موادي",
-    intro: "المواد اللي إنت معيد فيها.",
-    empty: { title: "مفيش مواد ليك لسه", body: "لما حد يربطك بمادة هتظهر هنا." },
-  },
-  subject: {
-    back: "موادي",
-    uploadTitle: "ارفع جدول المناقشات",
-    uploadHelp: "ملف PDF اتصدّر من الشيت، لحد 5 ميجا.",
-    chooseFile: "اختار ملف PDF",
-    upload: "ارفع وافحص",
-    uploading: "بنقرا الملف…",
-    duplicate: "الملف ده اترفع قبل كده، ده التقرير بتاعه.",
-    report: "نتيجة قراءة الملف",
-    rows: "صف",
-    tables: "جدول",
-    blocking: "مشكلة لازم تتصلّح",
-    warnings: "تنبيه",
-    namesFound: "الأسماء اللي في الملف",
-    createTitle: "اعمل المناقشات",
-    date: "تاريخ المناقشة",
-    dateHelp: "لو سيبته فاضي هيبقى النهارده.",
-    label: "وصف (اختياري)",
-    labelPlaceholder: "مثلاً الأسايمنت التاني والتالت",
-    create: "اعمل المناقشات",
-    creating: "بنجهّزها…",
-    sessions: "مناقشات المادة",
-    noSessions: "مفيش مناقشات لسه. ارفع ملف الجدول الأول.",
-    unclaimed: "لسه محدش حجز الاسم ده",
-    mine: "بتاعتك",
-    other: "عند معيد تاني",
-  },
-  session: {
-    back: "المادة",
-    claimTitle: "الاسم ده بتاعك؟",
-    claimBody: "اختار اسمك من الأسماء اللي في الملف عشان تعدّل الجدول وتأكّده.",
-    claim: "ده اسمي، احجزه",
-    claimedBy: "محجوز لمعيد تاني",
-    claimedByMe: "الاسم ده محجوز ليك",
-    confirmedNote: "الجدول متأكد وظاهر للطلبة.",
-    draftNote: "المناقشة لسه مسودة وماحدش من الطلبة شايفها.",
-    unpublished: "فيه تعديلات لسه مانشرتهاش. الطلبة شايفين الجدول القديم لحد ما تأكّد.",
-    issues: "المشاكل والتنبيهات",
-    noIssues: "مفيش مشاكل في الجدول.",
-    apply: "غيّر لـ",
-    table: "الجدول",
-    team: "تيم",
-    edit: "عدّل",
-    save: "احفظ",
-    cancel: "إلغاء",
-    remove: "امسح",
-    addRow: "ضيف صف",
-    fields: {
-      team: "رقم التيم",
-      leaderName: "اسم الـ leader",
-      leaderUniversityId: "رقم الـ leader (9 أرقام)",
-      day: "اليوم",
-      time: "الميعاد",
-    },
-    timePlaceholder: "8:20 AM",
-    replaceTitle: "استبدل الجدول بملف جديد",
-    replaceHelp: "هناخد جدولك بس من الملف الجديد.",
-    replace: "استبدل",
-    confirm: "أكّد الجدول",
-    confirming: "بنأكّد…",
-    confirmHelp: "بعد التأكيد الطلبة بيشوفوا الجدول، وكل تيم بياخد كود.",
-    confirmed: "اتأكد",
-    openPublic: "افتح صفحة الطلبة",
-    blockingLeft: "مشاكل لازم تتصلّح قبل التأكيد:",
-  },
-  codes: {
-    title: "أكواد التيمات",
-    help: "الكود ظاهر لكل الطلبة في الشيت. لو حد ربط تيم غلط اضغط فك الربط.",
-    team: "التيم",
-    code: "الكود",
-    account: "الحساب المربوط",
-    none: "لسه محدش ربطه",
-    reset: "فك الربط",
-    confirm: "تفك ربط الحساب ده من التيم؟ الـ leader الحقيقي هيقدر يربطه بعد كده.",
-    sheet: "افتح الشيت (PDF)",
-    empty: "مفيش تيمات.",
-  },
-  panel: {
-    missedTitle: "اتأخروا أو غابوا",
-    sendLate: "حطه في المتأخرين",
-    move: "انقله",
-    moveTitle: "انقل التيم لمناقشة تانية",
-    moveHelp: "التيم بيدخل طابور المتأخرين في المناقشة التانية، وبيستنى فراغ.",
-    moveTargets: "مناقشات المادة دي",
-    moveNone: "مفيش مناقشة تانية مؤكدة أو شغالة للمادة دي.",
-    moveQueue: "في الطابور الرئيسي هناك",
-    moveWarn: "التيم هيستنى أماكن فاضية.",
-    moveDone: "اتنقل لعند",
-    cancel: "إلغاء",
-    ok: "تمام",
-    end: "خلّص المناقشة",
-    ending: "بنخلّص…",
-    endConfirm: "تخلّص المناقشة؟ اللي اتأخروا من غير ما يطلبوا دور هيتقفل عليهم.",
-    endBlocked: "لسه فيه تيمات مستنية أو جوه. خلّصهم أو علّمهم أو شيلهم الأول:",
-    start: "ابدأ المناقشة",
-    starting: "بنبدأ…",
-    startHelp: "بعد البدء الطلبة بيشوفوا الطابور الحي.",
-    title: "التحكم في الطابور",
-    nobody: "مفيش حد جوه دلوقتي",
-    asking: "بنسأل",
-    coming: "جاي",
-    inside: "جوه",
-    next: "اسأل التيم اللي بعده",
-    arrived: "وصل",
-    absent: "غايب",
-    finish: "خلّص",
-    undo: "تراجع عن آخر حاجة",
-    remove: "شيله",
-    secondsLeft: "ثانية",
-    main: "الطابور",
-    late: "المتأخرين",
-    empty: "مفيش حد مستني",
-    missed: "اتأخروا أو غابوا",
-    done: "خلصوا",
-    refreshed: "ده الوضع دلوقتي عند السيرفر.",
-    notYours: "المناقشة دي مش بتاعتك.",
-    working: "…",
-  },
-  state: { loading: "بحمّل…", failed: "مقدرناش نحمّل البيانات.", retry: "جرّب تاني" },
-} as const;
-
-export const dayLabel: Record<string, string> = {
-  Monday: "الاثنين",
-  Tuesday: "الثلاثاء",
-  Wednesday: "الأربع",
-  Thursday: "الخميس",
-  Friday: "الجمعة",
-  Saturday: "السبت",
-  Sunday: "الأحد",
-};
-
-/** A short Arabic title for each kind of issue the backend reports. */
-export const issueTitle: Record<string, string> = {
-  UNREADABLE_ROW: "سطر مش مفهوم",
-  INVALID_TIME: "ميعاد غلط",
-  DUPLICATE_TEAM_NUMBER: "رقم تيم متكرر",
-  DUPLICATE_SLOT: "نفس الميعاد لتيمين",
-  TIME_GOES_BACKWARDS: "الميعاد رجع لورا",
-  GAP_NOT_FIVE_MINUTES: "الفرق مش 5 دقايق",
-  UNPARSED_TEXT: "نص مش صف",
-  WEEKDAY_MISMATCH: "اليوم مش زي تاريخ المناقشة",
-};
-
-/** Arabic text for server error codes we expect; anything else shows the server's message. */
+/** Friendlier text for server error codes a leader can meet; anything else shows the server's own message. */
 export const errorText: Record<string, string> = {
-  NAME_ALREADY_CLAIMED: "الاسم ده اتحجز لمعيد تاني.",
-  CANNOT_CONFIRM: "مش هينفع تأكّد دلوقتي.",
-  TEAM_IN_ANOTHER_SESSION: "فيه تيمات من دول مستنية في مناقشة تانية.",
-  NOT_EDITABLE: "المناقشة دي ابتدت أو خلصت ومش بتتعدّل.",
-  NOT_A_PDF: "الملف ده مش PDF.",
-  FILE_REQUIRED: "اختار ملف الأول.",
-  FILE_TOO_LARGE: "الملف أكبر من 5 ميجا.",
-  PDF_NO_TEXT: "الـ PDF ده مفيهوش نص. ارفع النسخة المتصدّرة من الشيت مش صورة.",
-  NO_SCHEDULE_ROWS: "مالقيناش صفوف جدول في الملف.",
-  PDF_READER_UNAVAILABLE: "قراءة الـ PDF مش متاحة دلوقتي.",
-  PDF_UNREADABLE: "الملف ده مش بيتقري كـ PDF.",
-  DATE_IN_THE_PAST: "التاريخ ده عدّى.",
-  VALIDATION_FAILED: "راجع الخانات.",
-  TA_NAME_NOT_IN_FILE: "الملف الجديد مفيهوش جدول للاسم ده.",
-  FORBIDDEN: "مش مسموح لك بالحاجة دي.",
-  CLAIM_CODE_INVALID: "الكود ده مش مطابق لأي تيم.",
-  TEAM_ALREADY_BOUND: "التيم ده مربوط بحساب تاني. لو ده غلط اطلب من المعيد يفك الربط.",
-  ALREADY_LEADING: "حسابك مربوط بتيم تاني في المادة دي.",
-  TOO_MANY_ATTEMPTS: "جرّبت أكواد غلط كتير. استنى شوية وحاول تاني.",
-  CLAIM_UNAVAILABLE: "الربط مش متاح دلوقتي. جرّب بعد شوية.",
-  NOT_A_LEADER: "حسابك مش مربوط بتيم في المادة دي.",
-  TEAM_NOT_IN_SESSION: "تيمك مش في المناقشة دي.",
-  SESSION_NOT_STARTED: "المناقشة مش شغالة دلوقتي.",
-  QUEUE_NOT_EMPTY: "لسه فيه تيمات مستنية أو جوه.",
-  INVALID_TARGET: "المناقشة دي مش مناسبة للنقل.",
-  SESSION_NOT_OPEN: "المناقشة دي مش مؤكدة ولا شغالة.",
-  TEAM_ALREADY_IN_TARGET: "التيم ده موجود في المناقشة التانية.",
-  ACTIVE_ENTRY_EXISTS: "فيه تيم لسه جوه أو بنسأل عليه. خلّصه أو علّمه الأول.",
-  QUEUE_EMPTY: "مفيش حد مستني في الطابور.",
-  ILLEGAL_TRANSITION: "الحالة اتغيّرت، مش هينفع الإجراء ده دلوقتي.",
-  NOTHING_TO_UNDO: "مفيش حاجة تتراجع عنها.",
-  UNDO_NOT_LAST: "تقدر تتراجع عن آخر حاجة بس.",
-  UNDO_STATE_CHANGED: "الحالة اتغيّرت، مش هينفع تتراجع عن الحاجة دي دلوقتي.",
-  CANNOT_START: "مش هينفع تبدأ المناقشة دلوقتي.",
-  UNPUBLISHED_CHANGES: "فيه تعديلات لسه مانشرتهاش. أكّد الجدول تاني قبل ما تبدأ.",
-  ANOTHER_SESSION_RUNNING: "عندك مناقشة تانية شغالة النهارده. خلّصها الأول.",
-};
-
-/** Arabic for the server's plain-English reasons shown when confirming is refused. */
-export const reasonText: Record<string, string> = {
-  "Fix the blocking issues in the table first.": "صلّح المشاكل اللي لازم تتصلّح في الجدول الأول.",
-  "Claim the TA name first.": "احجز اسمك الأول.",
-  "The table has no teams.": "الجدول مفيهوش تيمات.",
-  "This session has already started or ended.": "المناقشة دي ابتدت أو خلصت.",
+  FORBIDDEN: "You are not allowed to do this.",
+  LATE_REQUESTS_CLOSED: "You are past the allowed time, so you cannot ask for a new turn. Talk to the TA if you have an excuse.",
+  CLAIM_CODE_INVALID: "This code does not match any team.",
+  TEAM_ALREADY_BOUND: "This team is bound to another account. If that is wrong, ask the TA to unbind it.",
+  ALREADY_LEADING: "Your account already leads another team in this subject.",
+  TOO_MANY_ATTEMPTS: "Too many wrong codes. Wait a little and try again.",
+  CLAIM_UNAVAILABLE: "Binding is not available right now. Try again shortly.",
+  NOT_A_LEADER: "Your account is not bound to a team in this subject.",
+  TEAM_NOT_IN_SESSION: "Your team is not in this discussion.",
+  SESSION_NOT_STARTED: "The discussion is not running now.",
+  ILLEGAL_TRANSITION: "The state changed, so this cannot be done now.",
 };

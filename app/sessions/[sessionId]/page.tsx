@@ -39,6 +39,11 @@ async function SessionContent({ params }: { params: Promise<{ sessionId: string 
       {session.status === "NOT_STARTED" ? (
         <p className="mt-4 rounded-lg bg-idle-soft px-3 py-2 text-sm text-idle">{t.session.readOnly}</p>
       ) : null}
+      {session.status !== "ENDED" && session.lateCutoffMinutes !== null ? (
+        <p className="mt-4 rounded-lg bg-info-soft px-3 py-2 text-sm text-info">
+          {t.latePolicy.notice(session.lateCutoffMinutes)}
+        </p>
+      ) : null}
 
       {session.status !== "NOT_STARTED" ? (
         <div className="mt-5">

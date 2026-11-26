@@ -5,7 +5,7 @@ import { startStudentSignIn, studentSignOut } from "@/lib/auth";
 import { describeError } from "@/lib/describe-error";
 import { leaderText as L } from "@/lib/strings";
 import { studentPost } from "@/lib/student-client";
-import { TaError } from "@/lib/ta-client";
+import { RequestError } from "@/lib/request-error";
 import type { LiveSnapshot } from "@/lib/types";
 import { useSecondsLeft } from "@/lib/use-live-board";
 import type { MyTeam } from "@/lib/use-my-team";
@@ -41,7 +41,7 @@ export function LeaderBox({
       await work();
       if (ok) setMessage(ok);
     } catch (e) {
-      const wait = (e as TaError & { retryAfterSeconds?: number }).retryAfterSeconds;
+      const wait = (e as RequestError & { retryAfterSeconds?: number }).retryAfterSeconds;
       setMessage(describeError(e) + (wait ? ` (${L.tryLater} ${wait} ${L.seconds})` : ""));
     } finally {
       setBusy(false);

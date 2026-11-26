@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { studentFetch } from "./student-client";
-import { AuthRequired } from "./ta-client";
+import { AuthRequired } from "./request-error";
 
 export type MyTeam =
   | { status: "loading" }
