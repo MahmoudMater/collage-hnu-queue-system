@@ -227,6 +227,47 @@ export const t = {
       breakBack: "1:30 PM",
     },
   },
+  /** What search engines and link previews read. No student's name goes in here. */
+  seo: {
+    shortName: "Queue",
+    /** The home page's title; every other page reads "<its title> · Discussion queue". */
+    title: "Discussion queue: know when it’s your turn",
+    description:
+      "See who is inside a discussion now and where your team stands in the queue. Get a sound when your turn is near. No account needed to watch.",
+    level: {
+      title: (level: number) => `Level ${level} subjects`,
+      description: (level: number) =>
+        `Level ${level} subjects and their discussions. Pick a subject to see who is inside now and when your team’s turn is.`,
+    },
+    subject: {
+      title: (name: string) => `${name} discussions`,
+      description: (name: string, total: number) =>
+        total === 0
+          ? `Discussions for ${name} show here once the TA confirms the schedule.`
+          : `${sessionsCount(total)} for ${name}. Find your team by leader ID, leader name or team number, and see who is inside now.`,
+    },
+    session: {
+      title: (subject: string, ta: string) => `${subject} with ${ta}`,
+      description: (details: string) =>
+        `${details}. See who is inside now, the main queue and the late queue, and get a sound when your team’s turn is near.`,
+    },
+    signIn: "Signing in",
+    /** Words on the share images. */
+    og: {
+      alt: "Discussion queue: see who is inside now and when it is your team’s turn.",
+      homeSub: "See who is inside and where you stand.",
+      homeFacts: ["Live queue", "Sound alerts", "No account needed"],
+      subjects: (n: number) => (n === 1 ? "1 subject" : `${n} subjects`),
+      subject: "Subject",
+      discussion: "Discussion",
+      discussions: "Discussions",
+      subjectSub: "Find your team and see who is inside now.",
+    },
+  },
+  theme: {
+    /** The name of the button in the header, for a screen reader and as a tooltip. */
+    toggle: "Switch between light and dark",
+  },
   state: {
     errorTitle: "Something went wrong",
     errorBody: "We could not load the data right now.",
