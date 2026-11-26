@@ -29,7 +29,7 @@ export function StudentSignInCallback() {
         title={t.state.errorTitle}
         body={error === "student_sign_in_not_eligible" ? leaderText.notEligible : leaderText.signInFailed}
       >
-        <Link href="/" className="text-sm text-accent">
+        <Link href="/" className="dq-link text-sm">
           {t.state.goHome}
         </Link>
       </StateMessage>

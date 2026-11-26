@@ -2,17 +2,18 @@ import { statusLabel } from "@/lib/strings";
 import type { StatusWord } from "@/lib/types";
 
 const styles: Record<StatusWord, string> = {
-  NOT_STARTED: "bg-idle-soft text-idle",
-  RUNNING: "bg-ok-soft text-ok",
-  ENDED: "bg-info-soft text-info",
+  NOT_STARTED: "dq-badge",
+  RUNNING: "dq-badge dq-badge--ok dq-badge--live",
+  ENDED: "dq-badge dq-badge--info",
 };
 
-export function StatusBadge({ status }: { status: StatusWord }) {
-  return (
-    <span
-      className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[status]}`}
-    >
-      {statusLabel[status]}
-    </span>
-  );
+/** The same three words without the pill, for a row of the agenda. */
+const plainStyles: Record<StatusWord, string> = {
+  NOT_STARTED: "dq-status",
+  RUNNING: "dq-status dq-status--ok dq-status--live",
+  ENDED: "dq-status dq-status--info",
+};
+
+export function StatusBadge({ status, plain = false }: { status: StatusWord; plain?: boolean }) {
+  return <span className={(plain ? plainStyles : styles)[status]}>{statusLabel[status]}</span>;
 }
