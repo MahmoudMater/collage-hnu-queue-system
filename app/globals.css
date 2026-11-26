@@ -1,13 +1,26 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens, from the Discussion queue design system.
+ * Light is the default; dark follows the phone's setting.
+ */
 :root {
-  --background: #f7f7f5;
-  --foreground: #1b1b19;
-  --muted: #666660;
+  color-scheme: light dark;
+  --background: #f4f3ee;
   --card: #ffffff;
-  --line: #e2e1dc;
-  --accent: #185fa5;
-  --accent-soft: #e6f1fb;
+  --sunken: #e9e7df;
+  --foreground: #141412;
+  --muted: #5f5d55;
+  --line: #dcdad1;
+  --line-strong: #86847b;
+  --accent: #141412;
+  --accent-soft: #ffec99;
+  --primary: #141412;
+  --on-primary: #f4f3ee;
+  --brand: #141412;
+  --on-brand: #f4f3ee;
+  --signal: #ffd23f;
+  --on-signal: #141412;
   --ok: #3b6d11;
   --ok-soft: #eaf3de;
   --info: #854f0b;
@@ -16,36 +29,72 @@
   --idle-soft: #eceae3;
   --danger: #a32d2d;
   --danger-soft: #fcebeb;
+  --focus: var(--accent);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-sm: 2px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-pill: 999px;
+
+  /* The faces are loaded in app/layout.tsx. */
+  --font-display: var(--font-bricolage), var(--font-plex-arabic), system-ui, sans-serif;
+  --font-sans: var(--font-plex-sans), var(--font-plex-arabic), system-ui, sans-serif;
+  --font-num: var(--font-plex-mono), ui-monospace, monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #12120f;
-    --foreground: #ecebe6;
-    --muted: #a3a29b;
-    --card: #1b1b17;
-    --line: #34332e;
-    --accent: #85b7eb;
-    --accent-soft: #0c447c;
-    --ok: #c0dd97;
-    --ok-soft: #27500a;
-    --info: #fac775;
-    --info-soft: #633806;
-    --idle: #d3d1c7;
-    --idle-soft: #444441;
-    --danger: #f7c1c1;
-    --danger-soft: #791f1f;
+    --background: #000000;
+    --card: #151513;
+    --sunken: #0c0c0b;
+    --foreground: #f5f3ea;
+    --muted: #a9a79d;
+    --line: #2b2a26;
+    --line-strong: #77756c;
+    --accent: #f5f3ea;
+    --accent-soft: #26251e;
+    --primary: #f5f3ea;
+    --on-primary: #0c0c0b;
+    --brand: #000000;
+    --on-brand: #f5f3ea;
+    --signal: #ffd23f;
+    --on-signal: #141412;
+    --ok: #b7dd8c;
+    --ok-soft: #1c2b11;
+    --info: #f2c14e;
+    --info-soft: #2f2509;
+    --idle: #d1cfc5;
+    --idle-soft: #2b2a26;
+    --danger: #ffb4a8;
+    --danger-soft: #3b1613;
   }
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-card: var(--card);
+  --color-sunken: var(--sunken);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
-  --color-card: var(--card);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-brand: var(--brand);
+  --color-on-brand: var(--on-brand);
+  --color-signal: var(--signal);
+  --color-on-signal: var(--on-signal);
   --color-ok: var(--ok);
   --color-ok-soft: var(--ok-soft);
   --color-info: var(--info);
@@ -54,18 +103,14 @@
   --color-idle-soft: var(--idle-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
+  --color-focus: var(--focus);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family:
-    "Noto Kufi Arabic", "Noto Sans Arabic", system-ui, -apple-system, "Segoe UI",
-    Tahoma, sans-serif;
-  line-height: 1.6;
-}
-
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
+/* Type styles. */
+.display-xl { font-family: var(--font-display); font-size: 64px; line-height: 64px; font-weight: 800; letter-spacing: -0.035em; }
+.display-lg { font-family: var(--font-display); font-size: 40px; line-height: 44px; font-weight: 700; letter-spacing: -0.03em; }
+.title { font-family: var(--font-display); font-size: 28px; line-height: 32px; font-weight: 700; letter-spacing: -0.02em; }
+.heading { font-family: var(--font-display); font-size: 18px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; }
+.body-strong { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 600; }
+/* Named dq-overline because Tailwind has its own class of the plain name. */
+.dq-overline { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
