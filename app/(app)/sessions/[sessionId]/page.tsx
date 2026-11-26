@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { BackLink } from "@/components/BackLink";
 import { ListSkeleton } from "@/components/ListSkeleton";
@@ -5,11 +6,31 @@ import { Arriving, Leaving, PageTransition } from "@/components/PageTransition";
 import { StateMessage } from "@/components/StateMessage";
 import { StatusBadge } from "@/components/StatusBadge";
 import { LiveBoard } from "@/components/live/LiveBoard";
-import { apiGet } from "@/lib/api";
+import { apiGet, orNull } from "@/lib/api";
+import { pageMeta } from "@/lib/seo";
 import { dateParts, formatDate, formatTime, t } from "@/lib/strings";
 import type { LiveSnapshot } from "@/lib/types";
 
 type Props = { params: Promise<{ sessionId: string }>; searchParams: Promise<{ team?: string }> };
+
+const snapshotOf = (sessionId: string) =>
+  apiGet<LiveSnapshot>(`/api/v1/discussions/sessions/${encodeURIComponent(sessionId)}`);
+
+/**
+ * A discussion is shared in chats, not found in a search: it lasts a day and
+ * lists students by name. So it gets a preview and stays out of the index.
+ */
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { sessionId } = await params;
+  const session = (await snapshotOf(sessionId).catch(orNull))?.session;
+  if (!session) return { robots: { index: false, follow: true } };
+  return pageMeta({
+    title: t.seo.session.title(session.subject.name, session.taName),
+    description: t.seo.session.description([session.label, formatDate(session.date)].filter(Boolean).join(", ")),
+    path: `/sessions/${encodeURIComponent(session.id)}`,
+    index: false,
+  });
+}
 
 export default function SessionPage({ params, searchParams }: Props) {
   return (
@@ -35,9 +56,7 @@ async function SessionContent({ params, searchParams }: Props) {
   const { sessionId } = await params;
   // A link from the team search carries the team, so its slot can be marked before the queue starts.
   const myTeam = Number((await searchParams).team);
-  const snapshot = await apiGet<LiveSnapshot>(
-    `/api/v1/discussions/sessions/${encodeURIComponent(sessionId)}`,
-  );
+  const snapshot = await snapshotOf(sessionId);
   const { session, teams } = snapshot;
   const notStarted = session.status === "NOT_STARTED";
   const lateLimit = session.status !== "ENDED" ? session.lateCutoffMinutes : null;

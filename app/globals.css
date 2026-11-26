@@ -2,7 +2,8 @@
 
 /*
  * Design tokens, from the Discussion queue design system.
- * Light is the default; dark follows the phone's setting.
+ * Light is the default; dark follows the phone's setting, until the student
+ * picks one with the button in the header (components/ThemeToggle.tsx).
  */
 :root {
   color-scheme: light dark;
@@ -30,6 +31,16 @@
   --danger: #a32d2d;
   --danger-soft: #fcebeb;
   --focus: var(--accent);
+  /* The edge of a brand block, of a tile under the pointer, and of a loading row. */
+  --edge: var(--brand);
+  --edge-hover: var(--brand);
+  --edge-skel: var(--line);
+  /* The logo mark and the dots cut out of it. */
+  --mark: var(--foreground);
+  --mark-cut: var(--signal);
+  /* Which icon the theme button shows: 1 is shown, 0 is hidden. */
+  --theme-sun: 0;
+  --theme-moon: 1;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -51,8 +62,9 @@
   --font-num: var(--font-plex-mono), ui-monospace, monospace;
 }
 
+/* Dark: when the phone asks for it and the student has not picked light, or when they picked dark. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --background: #000000;
     --card: #151513;
     --sunken: #0c0c0b;
@@ -76,7 +88,50 @@
     --idle-soft: #2b2a26;
     --danger: #ffb4a8;
     --danger-soft: #3b1613;
+    --edge: var(--line);
+    --edge-hover: var(--line-strong);
+    --edge-skel: var(--line-strong);
+    --mark: var(--signal);
+    --mark-cut: var(--background);
+    --theme-sun: 1;
+    --theme-moon: 0;
   }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #000000;
+  --card: #151513;
+  --sunken: #0c0c0b;
+  --foreground: #f5f3ea;
+  --muted: #a9a79d;
+  --line: #2b2a26;
+  --line-strong: #77756c;
+  --accent: #f5f3ea;
+  --accent-soft: #26251e;
+  --primary: #f5f3ea;
+  --on-primary: #0c0c0b;
+  --brand: #000000;
+  --on-brand: #f5f3ea;
+  --signal: #ffd23f;
+  --on-signal: #141412;
+  --ok: #b7dd8c;
+  --ok-soft: #1c2b11;
+  --info: #f2c14e;
+  --info-soft: #2f2509;
+  --idle: #d1cfc5;
+  --idle-soft: #2b2a26;
+  --danger: #ffb4a8;
+  --danger-soft: #3b1613;
+  --edge: var(--line);
+  --edge-hover: var(--line-strong);
+  --edge-skel: var(--line-strong);
+  --mark: var(--signal);
+  --mark-cut: var(--background);
+  --theme-sun: 1;
+  --theme-moon: 0;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 @theme inline {

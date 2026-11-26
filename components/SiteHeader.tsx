@@ -3,6 +3,7 @@ import { ViewTransition, type ReactNode } from "react";
 import { t } from "@/lib/strings";
 import { Logo } from "./Logo";
 import { back } from "./PageTransition";
+import { ThemeToggle } from "./ThemeToggle";
 
 /**
  * The bar at the top of every page. The landing page passes its own links;
@@ -25,6 +26,7 @@ export function SiteHeader({ children }: { children?: ReactNode }) {
               </Link>
             </>
           )}
+          <ThemeToggle />
         </nav>
       </header>
     </ViewTransition>

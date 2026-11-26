@@ -1,15 +1,32 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { BackLink } from "@/components/BackLink";
+import { Breadcrumbs } from "@/components/JsonLd";
 import { ListSkeleton } from "@/components/ListSkeleton";
 import { Arriving, Leaving, PageTransition, forward } from "@/components/PageTransition";
 import { StateMessage } from "@/components/StateMessage";
 import { StatusBadge } from "@/components/StatusBadge";
 import { PaceNote } from "@/components/live/PaceNote";
 import { TeamSearch } from "@/components/TeamSearch";
-import { apiGet } from "@/lib/api";
+import { apiGet, orNull } from "@/lib/api";
+import { pageMeta } from "@/lib/seo";
 import { dateParts, formatDate, t, teamsWord } from "@/lib/strings";
 import type { SessionCard, SessionCardsResponse } from "@/lib/types";
+
+const sessionsOf = (subjectId: string) =>
+  apiGet<SessionCardsResponse>(`/api/v1/discussions/subjects/${encodeURIComponent(subjectId)}/sessions`);
+
+export async function generateMetadata({ params }: { params: Promise<{ subjectId: string }> }): Promise<Metadata> {
+  const { subjectId } = await params;
+  const data = await sessionsOf(subjectId).catch(orNull);
+  if (!data) return {};
+  return pageMeta({
+    title: t.seo.subject.title(data.subject.name),
+    description: t.seo.subject.description(data.subject.name, data.sessions.length),
+    path: `/subjects/${encodeURIComponent(data.subject.id)}`,
+  });
+}
 
 export default function SubjectPage({ params }: { params: Promise<{ subjectId: string }> }) {
   return (
@@ -36,9 +53,7 @@ const cairoToday = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Ca
 
 async function SubjectContent({ params }: { params: Promise<{ subjectId: string }> }) {
   const { subjectId } = await params;
-  const { subject, sessions } = await apiGet<SessionCardsResponse>(
-    `/api/v1/discussions/subjects/${encodeURIComponent(subjectId)}/sessions`,
-  );
+  const { subject, sessions } = await sessionsOf(subjectId);
   const today = cairoToday();
   const groups = [
     { title: t.level.today, cards: sessions.filter((s) => s.date === today) },
@@ -47,6 +62,13 @@ async function SubjectContent({ params }: { params: Promise<{ subjectId: string 
   const live = sessions.filter((s) => s.status === "RUNNING").length;
   return (
     <>
+      <Breadcrumbs
+        items={[
+          { name: t.appName, path: "/" },
+          ...(subject.level ? [{ name: t.level.names[subject.level - 1], path: `/levels/${subject.level}` }] : []),
+          { name: subject.name, path: `/subjects/${encodeURIComponent(subject.id)}` },
+        ]}
+      />
       <div className="dq-pagehead">
         <div>
           <BackLink href={subject.level ? `/levels/${subject.level}` : "/#levels"}>
@@ -112,7 +134,7 @@ function SessionCardItem({ s }: { s: SessionCard }) {
         <a
           href={`/api/v1/discussions/sessions/${encodeURIComponent(s.id)}/sheet`}
           target="_blank"
-          rel="noopener"
+          rel="noopener nofollow"
           aria-label={t.session.downloadSheet}
           title={t.session.downloadSheet}
           className="dq-session__sheet"

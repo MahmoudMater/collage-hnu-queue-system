@@ -20,6 +20,9 @@ A full redesign of the site: a black and yellow look, a landing page, new layout
 - **Starts banner.** A discussion that has not started shows when it starts, how many teams it has, and the first and last slot.
 - **Level switcher.** On a level's page, the four levels sit beside the title, so you can change level without going back.
 - **Empty states and a 404 page** with their own design.
+- **Light and dark button.** A sun and moon button in the header switches the theme. The choice is remembered on the device; without one the phone's setting decides. In light mode the logo is an ink bubble with yellow dots, with no tile behind it.
+- **Search and sharing.** Every page has its own title, description and canonical link. The site has a `robots.txt`, a `sitemap.xml` of the home page, the levels and the subjects, a web app manifest, an icon for a phone's home screen, and structured data for the site, its questions and its breadcrumbs.
+- **Share images.** A link to the home page, a level, a subject or a discussion shows its own picture in a chat: the queue, the level's number, the number of discussions, or the day of the discussion. No student's name is drawn.
 - **Motion.** A slow moving background, lists that arrive one item after another, queue rows that slide when the queue moves, a team number that flips in when a new team goes inside, and transitions between pages (deeper slides in from the right, back from the left). None of it runs when the device asks for reduced motion.
 
 ### Changed
@@ -35,6 +38,8 @@ A full redesign of the site: a black and yellow look, a landing page, new layout
 - **Sign-in line.** Now reads "Are you a team leader? Sign in to answer the call from here."
 - **Tap targets.** Every button and link is at least 44px to the finger.
 - **App pages moved** into the `app/(app)/` route group. URLs are the same.
+- **Discussion pages stay out of search results.** They last a day and list students by name, so they are marked `noindex`; they still get a preview when shared.
+- **A subject, discussion or level that does not exist** now answers 404 to search engines instead of 200.
 
 ### Removed
 
