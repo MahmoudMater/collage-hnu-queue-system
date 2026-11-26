@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useId, useState } from "react";
 import { formatDate, formatTime, t } from "@/lib/strings";
+import { forward } from "./PageTransition";
 import type { TeamSearchResult } from "@/lib/types";
 
 type State =
@@ -42,21 +43,21 @@ export function TeamSearch({ subjectId }: { subjectId: string }) {
   }
 
   return (
-    <section className="rounded-xl border border-line bg-card p-4">
-      <form onSubmit={search} className="flex flex-col gap-2">
-        <label htmlFor={inputId} className="text-sm font-medium">
+    <section className="dq-card dq-card--pad">
+      <form onSubmit={search} className="dq-stack dq-stack--sm">
+        <label htmlFor={inputId} className="dq-label">
           {t.search.label}
         </label>
-        <div className="flex gap-2">
+        <div className="dq-field">
           <input
             id={inputId}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             autoComplete="off"
             placeholder={t.search.placeholder}
-            className="min-w-0 flex-1 rounded-lg border border-line bg-background px-3 py-2 text-base"
+            className="dq-input"
           />
-          <button type="submit" className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-background">
+          <button type="submit" className="dq-btn dq-btn--primary">
             {t.search.button}
           </button>
         </div>
@@ -67,23 +68,25 @@ export function TeamSearch({ subjectId }: { subjectId: string }) {
         {state.kind === "failed" && <p className="text-muted">{t.search.failed}</p>}
         {state.kind === "done" && state.found.results.length === 0 && <p className="text-muted">{t.search.notFound}</p>}
         {state.kind === "done" && state.found.results.length > 0 && (
-          <ul className="space-y-2">
+          <ul className="dq-stack dq-stack--sm">
             {state.found.results.map((h) => (
               <li key={`${h.sessionId}-${h.number}`}>
-                <Link
-                  href={`/sessions/${h.sessionId}?team=${h.number}`}
-                  className="flex items-center justify-between gap-3 rounded-lg bg-accent-soft px-3 py-2 text-accent"
-                >
-                  <span className="min-w-0">
-                    <span className="font-medium">
+                <Link href={`/sessions/${h.sessionId}?team=${h.number}`} className="dq-hit" transitionTypes={forward}>
+                  <span>
+                    <span className="dq-hit__team">
                       {t.session.team} {h.number}
                     </span>
-                    {h.leaderName ? <span className="block truncate text-xs">{h.leaderName}</span> : null}
-                    <span className="block text-xs">
-                      {t.search.foundIn} <span dir="ltr">{h.taName}</span> · {formatDate(h.date)}
+                    {h.leaderName ? (
+                      <span className="dq-hit__meta" dir="auto">
+                        {h.leaderName}
+                      </span>
+                    ) : null}
+                    <span className="dq-hit__meta">
+                      {t.search.foundIn} <span dir="auto">{h.taName}</span> ·{" "}
+                      <span className="dq-nowrap">{formatDate(h.date)}</span>
                     </span>
                   </span>
-                  <span className="shrink-0 font-medium">{formatTime(h.time)}</span>
+                  <span className="dq-hit__time">{formatTime(h.time)}</span>
                 </Link>
               </li>
             ))}
