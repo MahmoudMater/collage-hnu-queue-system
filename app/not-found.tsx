@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { StateMessage } from "@/components/StateMessage";
 import { t } from "@/lib/strings";
+
+export const metadata: Metadata = { title: t.state.notFoundTitle, robots: { index: false, follow: false } };
 
 export default function NotFound() {
   return (

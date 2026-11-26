@@ -1,13 +1,26 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { Breadcrumbs } from "@/components/JsonLd";
 import { LevelSwitch } from "@/components/LevelSwitch";
 import { ListSkeleton } from "@/components/ListSkeleton";
 import { Arriving, Leaving, PageTransition, forward } from "@/components/PageTransition";
 import { StateMessage } from "@/components/StateMessage";
 import { apiGet } from "@/lib/api";
+import { pageMeta } from "@/lib/seo";
 import { sessionsCount, t } from "@/lib/strings";
 import type { SubjectsResponse } from "@/lib/types";
+
+export async function generateMetadata({ params }: { params: Promise<{ level: string }> }): Promise<Metadata> {
+  const { level } = await params;
+  if (!/^[1-4]$/.test(level)) notFound();
+  return pageMeta({
+    title: t.seo.level.title(Number(level)),
+    description: t.seo.level.description(Number(level)),
+    path: `/levels/${level}`,
+  });
+}
 
 export default function LevelPage({ params }: { params: Promise<{ level: string }> }) {
   return (
@@ -35,6 +48,12 @@ async function LevelContent({ params }: { params: Promise<{ level: string }> }) 
   const { subjects } = await apiGet<SubjectsResponse>(`/api/v1/discussions/subjects?level=${level}`);
   return (
     <>
+      <Breadcrumbs
+        items={[
+          { name: t.appName, path: "/" },
+          { name: t.level.names[Number(level) - 1], path: `/levels/${level}` },
+        ]}
+      />
       <div className="dq-titlebar dq-titlebar--center">
         <h1 className="title">{t.level.names[Number(level) - 1]}</h1>
         <LevelSwitch current={Number(level)} />

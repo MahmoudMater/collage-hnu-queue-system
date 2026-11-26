@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { JsonLd } from "@/components/JsonLd";
 import { HeroDemo } from "@/components/landing/HeroDemo";
 import { PageTransition, forward } from "@/components/PageTransition";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { QueueList } from "@/components/live/Queue";
+import { pageMeta } from "@/lib/seo";
+import { siteUrl } from "@/lib/site";
 import { t } from "@/lib/strings";
 import type { QueueItem } from "@/lib/types";
 
@@ -13,6 +16,32 @@ const demo = L.demo;
 const queueOf = (teams: readonly { number: number; leaderName: string; time: string | null }[]): QueueItem[] =>
   teams.map((team, i) => ({ ...team, position: i + 1, reason: null }));
 const demoMain = queueOf(demo.main);
+
+export const metadata = pageMeta({ title: t.seo.title, description: t.seo.description, path: "/" });
+
+/** The site and its questions, as search engines read them. */
+const structured = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: t.appName,
+      description: t.seo.description,
+      inLanguage: "en",
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${siteUrl}/#faq`,
+      mainEntity: L.faq.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a },
+      })),
+    },
+  ],
+};
 
 /** The front page: what the site does, then the way in. Nothing is remembered between visits. */
 export default function Home() {
@@ -29,6 +58,7 @@ export default function Home() {
 
       <PageTransition>
         <main>
+          <JsonLd data={structured} />
           <div className="dq-wrap">
             <section className="dq-lp__hero">
               <div>
