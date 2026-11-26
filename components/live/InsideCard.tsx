@@ -1,27 +1,41 @@
 "use client";
 
-import { shortName, t } from "@/lib/strings";
+import { t } from "@/lib/strings";
 import { useSecondsLeft } from "@/lib/use-live-board";
 import type { InsideEntry } from "@/lib/types";
 
-/** The team being asked, coming or inside, above the two queues. */
+/** The team being asked, coming or inside, above the queue. */
 export function InsideCard({
   inside,
   offsetMs,
   mine,
+  stats,
 }: {
   inside: InsideEntry | null;
   offsetMs: number;
   mine: boolean;
+  stats?: Stat[];
 }) {
   const left = useSecondsLeft(inside?.deadlineAt ?? null, offsetMs);
-  if (!inside) {
-    return (
-      <section className="rounded-xl border border-line bg-card px-4 py-5 text-center text-muted">
-        {t.live.nobodyInside}
-      </section>
-    );
-  }
+  return <InsideView inside={inside} left={left} mine={mine} stats={stats} />;
+}
+
+/** One of the board's figures, shown at the right of the banner on a wide screen. */
+export type Stat = { label: string; value: number };
+
+/** The card itself, given the seconds left; the landing page shows one as a picture. */
+export function InsideView({
+  inside,
+  left,
+  mine,
+  stats = [],
+}: {
+  inside: Pick<InsideEntry, "number" | "status" | "leaderName"> | null;
+  left: number | null;
+  mine: boolean;
+  stats?: Stat[];
+}) {
+  if (!inside) return <section className="dq-inside dq-inside--empty">{t.live.nobodyInside}</section>;
   const text =
     inside.status === "ASKING"
       ? { title: t.live.asking, hint: t.live.askingHint }
@@ -29,28 +43,43 @@ export function InsideCard({
         ? { title: t.live.coming, hint: t.live.comingHint }
         : { title: t.live.inside, hint: "" };
   return (
-    <section
-      aria-live="polite"
-      className={`rounded-xl border px-4 py-4 ${
-        inside.status === "INSIDE" ? "border-ok bg-ok-soft text-ok" : "border-info bg-info-soft text-info"
-      } ${mine ? "ring-2 ring-accent" : ""}`}
-    >
-      <p className="text-sm">{text.title}</p>
-      <div className="mt-1 flex items-center justify-between gap-3">
+    <section aria-live="polite" className={mine ? "dq-inside dq-inside--mine" : "dq-inside"}>
+      <div className="dq-inside__top">
+        <span className="dq-inside__label">{t.live.insideTitle}</span>
+        <span className={inside.status === "INSIDE" ? "dq-badge dq-badge--ok dq-badge--live" : "dq-badge dq-badge--info"}>
+          {text.title}
+        </span>
+      </div>
+      <div className="dq-inside__body">
         <div>
-          <p className="text-3xl font-medium">
+          {/* Keyed by the team, so a new team flips in like a board flap. */}
+          <p key={inside.number} className="dq-inside__team">
             {t.session.team} {inside.number}
           </p>
-          {inside.leaderName ? <p className="text-sm">{shortName(inside.leaderName)}</p> : null}
+          {inside.leaderName ? (
+            <p className="dq-inside__name" dir="auto">
+              {inside.leaderName}
+            </p>
+          ) : null}
         </div>
         {left !== null ? (
-          <p className="text-end">
-            <span className="block text-3xl font-medium tabular-nums">{left}</span>
-            <span className="text-xs">{t.live.secondsLeft}</span>
+          <p className="dq-inside__timer">
+            <span className="dq-inside__secs">{left}</span>
+            <span className="dq-inside__unit">{t.live.secondsLeft}</span>
           </p>
         ) : null}
       </div>
-      {text.hint ? <p className="mt-2 text-xs">{text.hint}</p> : null}
+      {text.hint ? <p className="dq-inside__hint">{text.hint}</p> : null}
+      {stats.length > 0 ? (
+        <div className="dq-inside__stats">
+          {stats.map((stat) => (
+            <span key={stat.label} className="dq-inside__stat">
+              <b>{stat.value}</b>
+              {stat.label}
+            </span>
+          ))}
+        </div>
+      ) : null}
     </section>
   );
 }

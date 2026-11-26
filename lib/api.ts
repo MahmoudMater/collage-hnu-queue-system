@@ -27,6 +27,15 @@ export async function apiGet<T>(path: string): Promise<T> {
   return (await res.json()) as T;
 }
 
+/**
+ * For a page's head: when the API fails, the head keeps the site's own title
+ * and the page itself says what went wrong. A missing resource is still not found.
+ */
+export function orNull(error: unknown): null {
+  if (error instanceof ApiError) return null;
+  throw error;
+}
+
 /** Browser-side read through this site's own /api proxy. */
 export async function clientGet<T>(path: string): Promise<T> {
   const res = await fetch(path, { cache: "no-store" });

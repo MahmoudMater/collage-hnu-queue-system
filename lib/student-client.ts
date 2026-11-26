@@ -2,7 +2,7 @@
  * Browser-side calls for a signed-in team leader. Requests go to this site's
  * own /api, carry the student cookie, and try one refresh when it has expired.
  */
-import { AuthRequired, TaError } from "./ta-client";
+import { AuthRequired, RequestError } from "./request-error";
 
 async function refresh(): Promise<boolean> {
   const res = await fetch("/api/v1/student/auth/browser/refresh", { method: "POST", cache: "no-store" });
@@ -21,8 +21,8 @@ export async function studentFetch<T>(path: string, init: RequestInit = {}): Pro
     } catch {
       /* no JSON body */
     }
-    const error = new TaError(res.status, body.error?.code ?? "REQUEST_FAILED", body.error?.message ?? `The server answered ${res.status}.`);
-    (error as TaError & { retryAfterSeconds?: number }).retryAfterSeconds = body.error?.details?.retryAfterSeconds;
+    const error = new RequestError(res.status, body.error?.code ?? "REQUEST_FAILED", body.error?.message ?? `The server answered ${res.status}.`);
+    (error as RequestError & { retryAfterSeconds?: number }).retryAfterSeconds = body.error?.details?.retryAfterSeconds;
     throw error;
   }
   return (await res.json()) as T;
