@@ -8,12 +8,15 @@ import { InsideCard } from "./InsideCard";
 import { LeaderBox } from "./LeaderBox";
 import { PaceNote } from "./PaceNote";
 import { TurnAlert, useFollowedTeam } from "./TurnAlert";
-import { QueueColumn } from "./QueueColumn";
+import { Queue } from "./Queue";
 
 /**
- * The live queue of a started session: the team being asked or inside, then
- * the main queue and the late queue side by side. A signed-in leader's own
- * team is highlighted in its column and he can answer the call from above it.
+ * The live board of a started session, top to bottom on a phone: the TA's
+ * pace, the team being asked or inside, the student's own tools (alerts, the
+ * leader's actions), then the queue with a tab each for the main and the late
+ * queue. On a desktop the team inside is a banner across the page, the queue
+ * takes the wide left column and the tools a right one that stays in view. A signed-in
+ * leader's own team is marked "You" and he can answer the call from above it.
  */
 export function LiveBoard({
   sessionId,
@@ -28,67 +31,75 @@ export function LiveBoard({
   const follow = useFollowedTeam(sessionId);
   // A signed-in leader watches his own team; anyone else may follow one by number.
   const myTeam = leaderTeam ?? follow.team;
+  // With late requests closed (cutoff 0) the late queue stays empty unless the TA or a move fills it.
+  const lateOn = board.session.lateCutoffMinutes !== 0 || board.queues.late.length > 0;
+  // The page shows this board only once the discussion has started, so it is running or it has ended.
+  const running = board.session.status === "RUNNING";
   return (
-    <div className="space-y-4">
+    <div className="dq-stack dq-stack--md">
       {connection === "lost" ? (
-        <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">
+        <p role="alert" className="dq-notice dq-notice--danger">
           {t.live.connectionLost}
         </p>
       ) : null}
-      {board.session.status === "RUNNING" ? (
-        <PaceNote pause={board.session.break} delayMinutes={board.delayMinutes} offsetMs={offsetMs} />
-      ) : null}
-      {board.session.status === "RUNNING" ? (
-        <TurnAlert board={board} team={myTeam} fixed={leaderTeam !== null} onFollow={follow.set} />
-      ) : null}
-      {board.session.status === "RUNNING" ? (
-        <LeaderBox sessionId={sessionId} subjectId={board.session.subject.id} board={board} offsetMs={offsetMs} me={me} />
-      ) : null}
-      {board.session.status === "ENDED" ? (
-        <p className="rounded-lg bg-info-soft px-3 py-2 text-sm text-info">{t.live.ended}</p>
-      ) : (
-        <InsideCard inside={board.inside} offsetMs={offsetMs} mine={myTeam !== null && board.inside?.number === myTeam} />
-      )}
-      <div className="grid grid-cols-2 gap-3">
-        <QueueColumn
-          title={t.live.mainTitle}
-          items={board.queues.main}
-          empty={t.live.emptyMain}
-          late={false}
-          mine={myTeam}
-        />
-        <QueueColumn
-          title={t.live.lateTitle}
-          items={board.queues.late}
-          empty={t.live.emptyLate}
-          late
-          mine={myTeam}
-        />
+      <div className={running ? "dq-live" : "dq-live dq-live--solo"}>
+        <div className="dq-live__pace">
+          {running ? (
+            <PaceNote pause={board.session.break} delayMinutes={board.delayMinutes} offsetMs={offsetMs} />
+          ) : (
+            <p className="dq-notice dq-notice--info">{t.live.ended}</p>
+          )}
+        </div>
+        {running ? (
+          <div className="dq-live__hero">
+            <InsideCard
+              inside={board.inside}
+              offsetMs={offsetMs}
+              mine={myTeam !== null && board.inside?.number === myTeam}
+              stats={[
+                { label: t.live.waiting, value: board.queues.main.length },
+                ...(lateOn ? [{ label: t.live.tabLate, value: board.queues.late.length }] : []),
+              ]}
+            />
+          </div>
+        ) : null}
+        {running ? (
+          <div className="dq-live__tools">
+            <section className="dq-turn" aria-label={t.alert.yourTurn}>
+              <TurnAlert board={board} team={myTeam} fixed={leaderTeam !== null} onFollow={follow.set} />
+              <LeaderBox sessionId={sessionId} subjectId={board.session.subject.id} board={board} offsetMs={offsetMs} me={me} />
+            </section>
+          </div>
+        ) : null}
+        <div className="dq-live__queue dq-stack dq-stack--md">
+          <Queue main={board.queues.main} late={board.queues.late} lateOn={lateOn} mine={myTeam} />
+          {board.movedOut.length > 0 ? (
+            <section>
+              <h2 className="dq-section-title dq-overline">{t.live.movedTitle}</h2>
+              <ul className="space-y-1 text-sm text-muted">
+                {board.movedOut.map((m) => (
+                  <li key={m.number}>
+                    {t.session.team} {m.number} {t.live.movedTo} <span dir="auto">{m.toTa}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+          {board.session.status === "ENDED" && board.teams.some((x) => x.status === "NOT_DISCUSSED") ? (
+            <section>
+              <h2 className="dq-section-title dq-overline">{t.live.notDiscussedTitle}</h2>
+              <p className="dq-help mb-2">{t.live.notDiscussedHint}</p>
+              <ul className="dq-chips">
+                {board.teams
+                  .filter((x) => x.status === "NOT_DISCUSSED")
+                  .map((x) => (
+                    <li key={x.number}>{x.number}</li>
+                  ))}
+              </ul>
+            </section>
+          ) : null}
+        </div>
       </div>
-      {board.movedOut.length > 0 ? (
-        <section>
-          <h2 className="mb-2 text-sm font-medium text-muted">{t.live.movedTitle}</h2>
-          <ul className="space-y-1 text-sm text-muted">
-            {board.movedOut.map((m) => (
-              <li key={m.number}>
-                {t.session.team} {m.number} {t.live.movedTo} <span dir="ltr">{m.toTa}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-      {board.session.status === "ENDED" && board.teams.some((x) => x.status === "NOT_DISCUSSED") ? (
-        <section>
-          <h2 className="mb-1 text-sm font-medium text-muted">{t.live.notDiscussedTitle}</h2>
-          <p className="mb-2 text-xs text-muted">{t.live.notDiscussedHint}</p>
-          <p className="text-sm">
-            {board.teams
-              .filter((x) => x.status === "NOT_DISCUSSED")
-              .map((x) => x.number)
-              .join(", ")}
-          </p>
-        </section>
-      ) : null}
     </div>
   );
 }

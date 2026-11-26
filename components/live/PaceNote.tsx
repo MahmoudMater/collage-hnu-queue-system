@@ -27,7 +27,7 @@ export function PaceNote({
   if (pause) {
     const over = Date.parse(pause.until) <= now + offsetMs;
     return (
-      <p className="rounded-lg bg-idle-soft px-3 py-2 text-sm text-idle">
+      <p className="dq-notice">
         {t.schedule.onBreak}
         {pause.reason && pause.reason !== "OTHER" ? ` (${t.schedule.breakReasons[pause.reason] ?? ""})` : ""}
         {" · "}
@@ -38,6 +38,6 @@ export function PaceNote({
   const label = t.schedule.delay(delayMinutes);
   if (!label) return null;
   return (
-    <p className={`text-sm ${delayMinutes && delayMinutes > 0 ? "text-info" : "text-muted"}`}>{label}</p>
+    <p className={delayMinutes && delayMinutes > 0 ? "dq-pace dq-pace--late" : "dq-pace"}>{label}</p>
   );
 }
